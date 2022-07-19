@@ -615,6 +615,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>DSP_LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>arm_cortexM4lf_math.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\DSP_LIB\arm_cortexM4lf_math.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Middlewares/FreeRTOS</GroupName>
           <Files>
             <File>
@@ -1080,10 +1090,37 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>malloc</GroupName>
+          <Files>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MALLOC\malloc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>src/adc</GroupName>
         </Group>
         <Group>
           <GroupName>src/es_control</GroupName>
+          <Files>
+            <File>
+              <FileName>es_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\es_control\es_control.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/us_control</GroupName>
+          <Files>
+            <File>
+              <FileName>us_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\us_control\us_control.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>src/flash</GroupName>
@@ -1097,12 +1134,49 @@
         </Group>
         <Group>
           <GroupName>src/fpga</GroupName>
+          <Files>
+            <File>
+              <FileName>fpga_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\fpga\fpga_control.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/hardware</GroupName>
+          <Files>
+            <File>
+              <FileName>AD9851_base.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\AD9851_base.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\hardware\uart.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>src/key</GroupName>
         </Group>
         <Group>
           <GroupName>src/net</GroupName>
+        </Group>
+        <Group>
+          <GroupName>src/pid</GroupName>
+          <Files>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\pid\pid.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>src/sdram</GroupName>
@@ -1123,43 +1197,15 @@
               <FileType>1</FileType>
               <FilePath>..\src\global.c</FilePath>
             </File>
+            <File>
+              <FileName>debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sys\debug.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>src/tasks</GroupName>
-        </Group>
-        <Group>
-          <GroupName>src/us_control</GroupName>
-        </Group>
-        <Group>
-          <GroupName>DSP_LIB</GroupName>
-          <Files>
-            <File>
-              <FileName>arm_cortexM4lf_math.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\DSP_LIB\arm_cortexM4lf_math.lib</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>malloc</GroupName>
-          <Files>
-            <File>
-              <FileName>malloc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\MALLOC\malloc.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>src/hardware</GroupName>
-          <Files>
-            <File>
-              <FileName>AD9851_base.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\hardware\AD9851_base.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

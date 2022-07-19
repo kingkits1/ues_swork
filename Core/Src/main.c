@@ -484,7 +484,7 @@ static void MX_DAC_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN DAC_Init 2 */
-
+  
   /* USER CODE END DAC_Init 2 */
 
 }

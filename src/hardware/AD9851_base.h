@@ -28,12 +28,12 @@ typedef union
    ST_9851_BASE base;
    uint8_t byte[5];
 }UN_ES_US_9851_DATA;
-extern UN_ES_US_9851_DATA es_8751_data;
-extern UN_ES_US_9851_DATA us_8751_data;
+extern UN_ES_US_9851_DATA es_9851_data;
+extern UN_ES_US_9851_DATA us_9851_data;
 
 
 void ad9851_wr_data(UN_ES_US_9851_DATA *data);
-void init_ad9851_data(UN_ES_US_9851_DATA *data);
+void init_ad9851_data(UN_ES_US_9851_DATA *data, uint32_t freq);
 void ad9851_set_freq(UN_ES_US_9851_DATA *data, uint32_t freq);
 void ad9851_set_phase(UN_ES_US_9851_DATA *data, uint8_t phase);
 void es_update_ad9851_freq_data(void);
