@@ -1,0 +1,2 @@
+---- W25X_Enable4ByteAddr Matches (1 in 1 files) ----
+w25qxx.h (G:\stm32work\src\flash) line 46 : #define W25X_Enable4ByteAddr    0xB7
