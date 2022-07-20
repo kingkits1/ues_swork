@@ -2,6 +2,9 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "global.h"
+
+
+__weak void empty_fun(void) {}
 /*******************************************************************************
 * 函 数 名         : delay_us
 * 函数功能           : 延时函数，延时us

@@ -138,6 +138,7 @@
 "stm32work\fpga_control.o"
 "stm32work\ad9851_base.o"
 "stm32work\uart.o"
+"stm32work\key.o"
 "stm32work\pid.o"
 "stm32work\system.o"
 "stm32work\global.o"

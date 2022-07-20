@@ -1,6 +1,11 @@
 #ifndef __GLOBAL_H
 #define __GLOBAL_H
 #include "sys/system.h"
+
+// Function defines
+#define USE_HAL_I2C_FUNCTION 0 // 定义是否使用硬件的I2C
+
+
 #define CCMRAM       __attribute__((section(".ccmram")))
 #define __ALIGNE(x)  __attribute__((aligned (x)))
 typedef enum 
@@ -29,6 +34,6 @@ extern uint8_t debug_printf_flag; // 此变量由debug.c定义
 #define dbg_printf(fmt, args...)
 #endif
 
-
+void empty_fun(void);
 void delay_us(uint32_t us);
 #endif
