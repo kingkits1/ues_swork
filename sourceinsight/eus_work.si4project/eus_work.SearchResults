@@ -1,2 +1,7 @@
----- W25X_Enable4ByteAddr Matches (1 in 1 files) ----
-w25qxx.h (G:\stm32work\src\flash) line 46 : #define W25X_Enable4ByteAddr    0xB7
+---- wav_buffill Matches (6 in 2 files) ----
+wavplay.c (G:\stm32work\src\sound) line 126 : uint32_t wav_buffill(uint8_t *buf,uint16_t size,uint8_t bits)
+wav_play_song in wavplay.c (G:\stm32work\src\sound) : 				fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
+wav_play_song in wavplay.c (G:\stm32work\src\sound) : 				fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
+wav_play_song in wavplay.c (G:\stm32work\src\sound) :  					if(wavwitchbuf)fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
+wav_play_song in wavplay.c (G:\stm32work\src\sound) : 					else fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
+wavplay.h (G:\stm32work\src\sound) line 86 : uint32_t wav_buffill(uint8_t *buf,uint16_t size,uint8_t bits);

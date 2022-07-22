@@ -3,11 +3,18 @@
 #include "sys/system.h"
 
 // Function defines
-#define USE_HAL_I2C_FUNCTION 0 // 定义是否使用硬件的I2C
+#define USE_HAL_I2C_FUNCTION 1 // 定义是否使用硬件的I2C
 
 
 #define CCMRAM       __attribute__((section(".ccmram")))
 #define __ALIGNE(x)  __attribute__((aligned (x)))
+typedef enum 
+{
+    EM_SUCCEED,
+    EM_FAIL 
+} ENUM_OPERATION_RESULT_DEFINES;
+
+
 typedef enum 
 {
     EM_DISABLE=0,

@@ -1,5 +1,5 @@
 #include "myiic3.h"
-#include "delay.h"
+//#include "delay.h"
 
 //IIC≥ı ºªØ
 void IIC3_Init(void)

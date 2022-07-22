@@ -56,7 +56,7 @@ void set_actived_mask(ENUM_ACTIVED_CONTROL mask)
 void init_key_val(void)
 {
     set_actived_mask(EM_US_HAND_AND_FOOT);
-    key_val.key = 0;
+    key_val.key.val = 0;
     key_val.es_active_flag = false;
     key_val.us_max_active_flag = false;
     key_val.us_min_active_flag = false;
@@ -64,8 +64,8 @@ void init_key_val(void)
 
 void check_key_actions(uint16_t key)
 {
-    key_val.key = key;
-    key_val.ues_checked_flag = key_val.key & key_val.key_mask;
+    key_val.key.val = key;
+    key_val.ues_checked_flag = key_val.key.val & key_val.key_mask.val;
     if(key_val.ues_checked_flag & US_MAX_KEY_MASK_ALL)
     {
         // 需要区分切割和凝血操作

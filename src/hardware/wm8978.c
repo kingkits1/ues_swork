@@ -1,10 +1,9 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "../global.h"
-#include "stm32f4xx_hal_i2c"
+#include "stm32f4xx_hal_i2c.h"
 #include "wm8978.h"
 #include "myiic3.h"
-#include "delay.h"
 
 extern I2C_HandleTypeDef hi2c3;
 //WM8978寄存器值缓存区(总共58个寄存器,0~57),占用116字节内存

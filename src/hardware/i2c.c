@@ -63,7 +63,7 @@ void reset_i2c3_master(void)
         delay_us(100);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);//PHout(4) = 1;  // SCL = 1;
         delay_us(100);
-        status = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_9,);//PCin(9);
+        status = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_9);//PCin(9);
         if(count++ > 16) break;
     }
     __HAL_RCC_I2C3_CLK_ENABLE();
@@ -118,7 +118,7 @@ void reset_i2c2_master(void)
     CLEAR_BIT(hi2c2.Instance->CR1, I2C_CR1_SWRST);
     delay_us(300);
 }
-
+__weak void IIC3_Init(void){}
 
 #else
 #include "myiic3.c"

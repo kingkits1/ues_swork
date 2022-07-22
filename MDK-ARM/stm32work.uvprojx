@@ -205,7 +205,7 @@
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
             <Ir1Chk>1</Ir1Chk>
-            <Ir2Chk>1</Ir2Chk>
+            <Ir2Chk>0</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F429xx</Define>
+              <Define>USE_HAL_DRIVER,STM32F429xx,__TARGET_FPU_VFP,ARM_MATH_CM4,__CC_ARM</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../LWIP/App;../LWIP/Target;../Middlewares/Third_Party/LwIP/src/include;../Middlewares/Third_Party/LwIP/system;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/BSP/Components/lan8742;../Middlewares/Third_Party/LwIP/src/include/netif/ppp;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Middlewares/Third_Party/LwIP/src/include/lwip;../Middlewares/Third_Party/LwIP/src/include/lwip/apps;../Middlewares/Third_Party/LwIP/src/include/lwip/priv;../Middlewares/Third_Party/LwIP/src/include/lwip/prot;../Middlewares/Third_Party/LwIP/src/include/netif;../Middlewares/Third_Party/LwIP/src/include/compat/posix;../Middlewares/Third_Party/LwIP/src/include/compat/posix/arpa;../Middlewares/Third_Party/LwIP/src/include/compat/posix/net;../Middlewares/Third_Party/LwIP/src/include/compat/posix/sys;../Middlewares/Third_Party/LwIP/src/include/compat/stdc;../Middlewares/Third_Party/LwIP/system/arch;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
@@ -612,15 +612,10 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/system_stm32f4xx.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>DSP_LIB</GroupName>
-          <Files>
             <File>
               <FileName>arm_cortexM4lf_math.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\DSP_LIB\arm_cortexM4lf_math.lib</FilePath>
+              <FilePath>..\Drivers\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1093,9 +1088,9 @@
           <GroupName>malloc</GroupName>
           <Files>
             <File>
-              <FileName>malloc.c</FileName>
+              <FileName>mem_defines.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\MALLOC\malloc.c</FilePath>
+              <FilePath>..\src\MALLOC\mem_defines.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1160,6 +1155,21 @@
               <FileType>5</FileType>
               <FilePath>..\src\hardware\uart.h</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>wm8978.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\wm8978.c</FilePath>
+            </File>
+            <File>
+              <FileName>sai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\sai.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1190,6 +1200,28 @@
         </Group>
         <Group>
           <GroupName>src/sound</GroupName>
+          <Files>
+            <File>
+              <FileName>wave_data_key_click.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\wave_data_key_click.c</FilePath>
+            </File>
+            <File>
+              <FileName>wave_data_us_close.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\wave_data_us_close.c</FilePath>
+            </File>
+            <File>
+              <FileName>wave_data_us_max.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\wave_data_us_max.c</FilePath>
+            </File>
+            <File>
+              <FileName>wave_data_us_min.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\wave_data_us_min.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>src/sys</GroupName>
