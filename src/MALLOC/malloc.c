@@ -15,12 +15,12 @@ const unsigned int memsize[SRAMBANK] = {MEM1_MAX_SIZE, MEM2_MAX_SIZE, MEM3_MAX_S
 
 //内存管理控制器
 struct _m_mallco_dev mallco_dev =
-    {
-        my_mem_init,                           //内存初始化
-        my_mem_perused,                        //内存使用率
-        mem1base, mem2base, mem3base,          //内存池
-        mem1mapbase, mem2mapbase, mem3mapbase, //内存管理状态表
-        0, 0, 0,                               //内存管理未就绪
+{
+    my_mem_init,                           //内存初始化
+    my_mem_perused,                        //内存使用率
+    mem1base, mem2base, mem3base,          //内存池
+    mem1mapbase, mem2mapbase, mem3mapbase, //内存管理状态表
+    0, 0, 0,                               //内存管理未就绪
 };
 
 //复制内存

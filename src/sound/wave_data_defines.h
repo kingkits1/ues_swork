@@ -6,22 +6,22 @@ extern unsigned char wave_data_us_min[];
 extern unsigned char wave_data_us_close[];
 extern unsigned char wave_data_key_click[];
 
-typedef enum 
+typedef enum
 {
     // US
     EM_WAV_US_CUTTING,    // US MAX ÇÐ¸î
-    EM_WAV_US_HEMOSTASIS, // US MIN Ö¹Ñª hemostasis 
+    EM_WAV_US_HEMOSTASIS, // US MIN Ö¹Ñª hemostasis
     EM_WAV_US_CLOSING,    // US CLOSING Ç¯¿Ú±ÕºÏ
     // ALARM
     EM_WAV_ALARM_LOW,     // µÍÓÅÏÈ¼¶¾¯Ê¾Òô
     EM_WAV_ALARM_HIGH,    // ¸ßÓÅÏÈ¼¶¾¯Ê¾Òô
     // ES
     EM_WAV_ES_CUTTING,    // ES MAX ÇÐ¸î
-    EM_WAV_ES_HEMOSTASIS, // ES MIN Ö¹Ñª hemostasis 
+    EM_WAV_ES_HEMOSTASIS, // ES MIN Ö¹Ñª hemostasis
     EM_WAV_ES_CLOSING,    // ES CLOSING ±ÕºÏ
     // US+ES
     EM_WAV_UES_CUTTING,    // US+ES MAX ÇÐ¸î
-    EM_WAV_UES_HEMOSTASIS, // US+ES MIN Ö¹Ñª hemostasis 
+    EM_WAV_UES_HEMOSTASIS, // US+ES MIN Ö¹Ñª hemostasis
     EM_WAV_UES_CLOSING,    // US+ES CLOSING ±ÕºÏ
     // KEY pushed voice
     EM_WAV_KEY_CLICK,
@@ -31,7 +31,7 @@ typedef enum
     EM_WAV_SHUT_DOWN,
     // OTHER
     EM_WAV_DEFAULT
-      // TODO:
+    // TODO:
 } ENUM_WAVE_TYPES;
 #endif
 // End of File:wave_data_defines.h

@@ -59,9 +59,9 @@ uint8_t WM8978_Write_Reg(uint8_t reg, uint16_t val)
     uint8_t txbuf[2];
     uint16_t tx_address;
     HAL_StatusTypeDef status;
-    tx_address=(reg << 1) | ((val >> 8) & 0X01);
-    txbuf[0]=val & 0XFF;
-    status=HAL_I2C_Mem_Write(&hi2c3,WM8978_ADDR << 1,tx_address,1,txbuf,1,1000);
+    tx_address = (reg << 1) | ((val >> 8) & 0X01);
+    txbuf[0] = val & 0XFF;
+    status = HAL_I2C_Mem_Write(&hi2c3, WM8978_ADDR << 1, tx_address, 1, txbuf, 1, 1000);
     if(status == HAL_OK)
     {
         WM8978_REGVAL_TBL[reg] = val;	//保存寄存器值到本地

@@ -32,8 +32,22 @@ void short_delay(unsigned int count)
     // —” ±16∏ˆ ±÷”£ø£ø n x 16 + 10
     while(count--)
     {
-        __asm("\tnop"); __asm("\tnop"); __asm("\tnop"); __asm("\tnop"); __asm("\tnop");	__asm("\tnop");	__asm("\tnop");	__asm("\tnop");
-        __asm("\tnop"); __asm("\tnop"); __asm("\tnop"); __asm("\tnop"); __asm("\tnop");	__asm("\tnop");	__asm("\tnop");	__asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
     }
 }
 

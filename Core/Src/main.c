@@ -102,6 +102,13 @@ const osThreadAttr_t mainTask_attributes = {
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for net */
+osThreadId_t netHandle;
+const osThreadAttr_t net_attributes = {
+  .name = "net",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -126,10 +133,11 @@ static void MX_DMA_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_USART3_UART_Init(void);
 void StartDefaultTask(void *argument);
-void StartTask02(void *argument);
-void StartTask03(void *argument);
-void StartTask04(void *argument);
-void StartTask05(void *argument);
+void StartTask02_us_es(void *argument);
+void StartTaskCOM(void *argument);
+void StartTaskFPGA(void *argument);
+void StartTaskMain(void *argument);
+void StartTaskNet(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -214,16 +222,19 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of us_es_Task */
-  us_es_TaskHandle = osThreadNew(StartTask02, NULL, &us_es_Task_attributes);
+  us_es_TaskHandle = osThreadNew(StartTask02_us_es, NULL, &us_es_Task_attributes);
 
   /* creation of comTask */
-  comTaskHandle = osThreadNew(StartTask03, NULL, &comTask_attributes);
+  comTaskHandle = osThreadNew(StartTaskCOM, NULL, &comTask_attributes);
 
   /* creation of fpga_Task */
-  fpga_TaskHandle = osThreadNew(StartTask04, NULL, &fpga_Task_attributes);
+  fpga_TaskHandle = osThreadNew(StartTaskFPGA, NULL, &fpga_Task_attributes);
 
   /* creation of mainTask */
-  mainTaskHandle = osThreadNew(StartTask05, NULL, &mainTask_attributes);
+  mainTaskHandle = osThreadNew(StartTaskMain, NULL, &mainTask_attributes);
+
+  /* creation of net */
+  netHandle = osThreadNew(StartTaskNet, NULL, &net_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -1230,76 +1241,94 @@ void StartDefaultTask(void *argument)
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartTask02 */
+/* USER CODE BEGIN Header_StartTask02_us_es */
 /**
 * @brief Function implementing the us_es_Task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask02 */
-__weak void StartTask02(void *argument)
+/* USER CODE END Header_StartTask02_us_es */
+__weak void StartTask02_us_es(void *argument)
 {
-  /* USER CODE BEGIN StartTask02 */
+  /* USER CODE BEGIN StartTask02_us_es */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartTask02 */
+  /* USER CODE END StartTask02_us_es */
 }
 
-/* USER CODE BEGIN Header_StartTask03 */
+/* USER CODE BEGIN Header_StartTaskCOM */
 /**
 * @brief Function implementing the comTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask03 */
-__weak void StartTask03(void *argument)
+/* USER CODE END Header_StartTaskCOM */
+__weak void StartTaskCOM(void *argument)
 {
-  /* USER CODE BEGIN StartTask03 */
+  /* USER CODE BEGIN StartTaskCOM */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartTask03 */
+  /* USER CODE END StartTaskCOM */
 }
 
-/* USER CODE BEGIN Header_StartTask04 */
+/* USER CODE BEGIN Header_StartTaskFPGA */
 /**
 * @brief Function implementing the fpga_Task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask04 */
-__weak void StartTask04(void *argument)
+/* USER CODE END Header_StartTaskFPGA */
+__weak void StartTaskFPGA(void *argument)
 {
-  /* USER CODE BEGIN StartTask04 */
+  /* USER CODE BEGIN StartTaskFPGA */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartTask04 */
+  /* USER CODE END StartTaskFPGA */
 }
 
-/* USER CODE BEGIN Header_StartTask05 */
+/* USER CODE BEGIN Header_StartTaskMain */
 /**
 * @brief Function implementing the mainTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask05 */
-__weak void StartTask05(void *argument)
+/* USER CODE END Header_StartTaskMain */
+__weak void StartTaskMain(void *argument)
 {
-  /* USER CODE BEGIN StartTask05 */
+  /* USER CODE BEGIN StartTaskMain */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartTask05 */
+  /* USER CODE END StartTaskMain */
+}
+
+/* USER CODE BEGIN Header_StartTaskNet */
+/**
+* @brief Function implementing the net thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTaskNet */
+void StartTaskNet(void *argument)
+{
+  /* USER CODE BEGIN StartTaskNet */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTaskNet */
 }
 
 /**

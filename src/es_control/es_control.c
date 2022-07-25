@@ -11,7 +11,7 @@ extern DAC_HandleTypeDef hdac;
 ******************************************************************************/
 void ES_Set_Pwr(uint16_t vol)
 {
-    float temp = (float)vol;    
+    float temp = (float)vol;
     temp *= 1.2412121f; // = 4096/3300
     HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, temp); //12位右对齐数据格式设置DAC值
 }
@@ -31,7 +31,7 @@ void Start_ES_work(void)
     // ad9851芯片复位
     es_reset_ad9851_chip();
     // 设置初始频率和相位
-    init_ad9851_data(&es_9851_data,555000); 
+    init_ad9851_data(&es_9851_data, 555000);
     // 设置初始功率输出值
     ES_Set_Pwr(3100); // 贺工使用的是 3150
     // 打开功率输出通道
@@ -40,7 +40,7 @@ void Start_ES_work(void)
     ad9851_wr_data(&es_9851_data);
     // 通知芯片使能数据
     es_update_ad9851_freq_data();
-    // 似乎是使能FPGA？不需要在这里做    
+    // 似乎是使能FPGA？不需要在这里做
 }
 
 // TODO: 未完成
@@ -49,7 +49,7 @@ void Start_ES_work(void)
 // GPIO 控制是反着的，即 =1时是关闭
 void es_set_electric_relay(ENUM_ACTIVITY act)
 {
-    if(act==EM_DISABLE)
+    if(act == EM_DISABLE)
     {
         PDout(12) = 1;
     }
@@ -63,7 +63,7 @@ void es_set_electric_relay(ENUM_ACTIVITY act)
 // 电源控制是反着的，即 =1时是关闭电源
 void es_set_power_supply(ENUM_ACTIVITY act)
 {
-    if(act==EM_DISABLE)
+    if(act == EM_DISABLE)
     {
         PBout(5) = 1;
     }

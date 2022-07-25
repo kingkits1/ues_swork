@@ -312,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -608,14 +608,14 @@
           <GroupName>Drivers/CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f4xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32f4xx.c</FilePath>
-            </File>
-            <File>
               <FileName>arm_cortexM4lf_math.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\Drivers\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32f4xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/system_stm32f4xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1221,6 +1221,16 @@
               <FileType>1</FileType>
               <FilePath>..\src\sound\wave_data_us_min.c</FilePath>
             </File>
+            <File>
+              <FileName>wavplay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\wavplay.c</FilePath>
+            </File>
+            <File>
+              <FileName>audioplay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sound\audioplay.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1245,6 +1255,23 @@
         </Group>
         <Group>
           <GroupName>src/tasks</GroupName>
+          <Files>
+            <File>
+              <FileName>TaskMain.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\tasks\TaskMain.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/test</GroupName>
+          <Files>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\test.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

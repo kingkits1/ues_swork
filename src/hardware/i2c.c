@@ -45,11 +45,11 @@ void reset_i2c3_master(void)
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C2;
-    GPIO_InitStruct.Pin = GPIO_PIN_8;    
+    GPIO_InitStruct.Pin = GPIO_PIN_8;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     GPIO_InitStruct.Pin = GPIO_PIN_9;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-    
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);//PHout(5) = 1;  // SDA = 1;
     delay_us(100);
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);//PHout(4) = 1;  // SCL = 1;
@@ -93,7 +93,7 @@ void reset_i2c2_master(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C2;
     HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
-    
+
     HAL_GPIO_WritePin(GPIOH, GPIO_PIN_5, GPIO_PIN_SET);//PHout(5) = 1;  // SDA = 1;
     delay_us(100);
     HAL_GPIO_WritePin(GPIOH, GPIO_PIN_4, GPIO_PIN_SET);//PHout(4) = 1;  // SCL = 1;
@@ -118,7 +118,7 @@ void reset_i2c2_master(void)
     CLEAR_BIT(hi2c2.Instance->CR1, I2C_CR1_SWRST);
     delay_us(300);
 }
-__weak void IIC3_Init(void){}
+__weak void IIC3_Init(void) {}
 
 #else
 #include "myiic3.c"

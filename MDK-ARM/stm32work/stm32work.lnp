@@ -38,8 +38,8 @@
 "stm32work\stm32f4xx_hal_tim.o"
 "stm32work\stm32f4xx_hal_tim_ex.o"
 "stm32work\stm32f4xx_hal_uart.o"
-"stm32work\system_stm32f4xx.o"
 "..\Drivers\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib"
+"stm32work\system_stm32f4xx.o"
 "stm32work\croutine.o"
 "stm32work\event_groups.o"
 "stm32work\list.o"
@@ -147,9 +147,13 @@
 "stm32work\wave_data_us_close.o"
 "stm32work\wave_data_us_max.o"
 "stm32work\wave_data_us_min.o"
+"stm32work\wavplay.o"
+"stm32work\audioplay.o"
 "stm32work\system.o"
 "stm32work\global.o"
 "stm32work\debug.o"
+"stm32work\taskmain.o"
+"stm32work\test.o"
 --strict --scatter "stm32work\stm32work.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

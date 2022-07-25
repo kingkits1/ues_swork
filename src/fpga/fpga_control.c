@@ -7,7 +7,7 @@
 // us 禁止fpga输出频率 = 0
 void us_set_fpga_freq(ENUM_ACTIVITY act)
 {
-    PIout(7)=act;
+    PIout(7) = act;
 }
 
 
@@ -16,12 +16,12 @@ void us_set_fpga_freq(ENUM_ACTIVITY act)
 // es 禁止fpga输出频率 = 0
 void es_set_fpga_freq(ENUM_ACTIVITY act)
 {
-    PIout(7)=act; // ！！！待定义
+    PIout(7) = act; // ！！！待定义
 }
 //
 void set_fpga_ram_port(ENUM_ACTIVITY act)
 {
-    if(act==EM_DISABLE)
+    if(act == EM_DISABLE)
     {
         PIout(8) = 1;
     }

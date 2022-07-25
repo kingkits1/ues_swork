@@ -9,7 +9,7 @@
 #define US_MAX_KEY_MASK_ALL 0x5
 #define US_MIN_KEY_MASK_ALL 0xA
 #define ES_KEY_MASK_ALL 0x10
-typedef enum 
+typedef enum
 {
     EM_ALL_DISABLE,
     // US only
@@ -22,21 +22,21 @@ typedef enum
     EM_ES_US_HAND_ONLY,
     EM_ES_US_FOOT_ONLY,
     EM_ES_US_HAND_AND_FOOT
-}ENUM_ACTIVED_CONTROL;
+} ENUM_ACTIVED_CONTROL;
 
 
 
 typedef struct
 {
     // 超声刀操作
-    uint16_t foot_max:1;
-    uint16_t foot_min:1;
-    uint16_t hand_max:1;
-    uint16_t hand_min:1;
+    uint16_t foot_max: 1;
+    uint16_t foot_min: 1;
+    uint16_t hand_max: 1;
+    uint16_t hand_min: 1;
     // 高频电刀操作 TODO:
-    uint16_t elect_action:1;
-    uint16_t unused  :11;
-}ST_KEY_BIT_DEFINES;
+    uint16_t elect_action: 1;
+    uint16_t unused  : 11;
+} ST_KEY_BIT_DEFINES;
 
 typedef union
 {
@@ -53,7 +53,7 @@ typedef struct
     bool us_min_active_flag;// 低能量激发
     bool us_max_active_flag;// 当高低能量同时激发时，响应高能量激发
     bool es_active_flag;
-}ST_KEY_DATA;
+} ST_KEY_DATA;
 
 
 void set_actived_mask(ENUM_ACTIVED_CONTROL mask);

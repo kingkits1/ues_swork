@@ -59,17 +59,17 @@ void uartx_irq(uint8_t uart_port)
             CLEAR_BIT(huart1.Instance->CR1, USART_CR1_TXEIE);
         }
         return;
-    case EM_UART_PORT_2:        
+    case EM_UART_PORT_2:
         return;
     case EM_UART_PORT_3:
         return;
     case EM_UART_PORT_4:
     case EM_UART_PORT_5:
-    case EM_UART_PORT_6:        
+    case EM_UART_PORT_6:
         return;
     case EM_UART_PORT_7:
         return;
-    case EM_UART_PORT_8:        
+    case EM_UART_PORT_8:
     default:
         return;
     }

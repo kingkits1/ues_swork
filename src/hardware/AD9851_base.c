@@ -6,14 +6,14 @@ UN_ES_US_9851_DATA es_9851_data;
 UN_ES_US_9851_DATA us_9851_data;
 void ad9851_wr_data(UN_ES_US_9851_DATA *data)
 {
-	HAL_SPI_Transmit(&hspi3, (uint8_t *)(data->byte), 5, 1000);
+    HAL_SPI_Transmit(&hspi3, (uint8_t *)(data->byte), 5, 1000);
 }
 
 void init_ad9851_data(UN_ES_US_9851_DATA *data, uint32_t freq)
 {
     data->base.set_phase.REFCLKx6_enable = 1;
     data->base.set_phase.const_bit = 0;
-    data->base.set_phase.powerdown_bit =0;    
+    data->base.set_phase.powerdown_bit = 0;
     data->base.set_phase.phase = 1; // 11.25
     data->base.set_frequency = freq;
 }
@@ -35,37 +35,49 @@ void ad9851_set_phase(UN_ES_US_9851_DATA *data, uint8_t phase)
 void es_update_ad9851_freq_data(void)
 {
     ES_UPDATE_PIN = 0;
-    __NOP();__NOP();__NOP();__NOP();
+    __NOP();
+    __NOP();
+    __NOP();
+    __NOP();
     ES_UPDATE_PIN = 1;
-    __NOP();__NOP();__NOP();__NOP();
+    __NOP();
+    __NOP();
+    __NOP();
+    __NOP();
     ES_UPDATE_PIN = 0;
 }
 void es_reset_ad9851_chip(void)
 {
-    ES_RESET_PIN=0;
+    ES_RESET_PIN = 0;
     delay_us(2);
-    ES_RESET_PIN=1;
+    ES_RESET_PIN = 1;
     delay_us(2);
-    ES_RESET_PIN=0;
-    delay_us(10);    
+    ES_RESET_PIN = 0;
+    delay_us(10);
 }
 
 
 void us_update_ad9851_freq_data(void)
 {
     US_UPDATE_PIN = 0;
-    __NOP();__NOP();__NOP();__NOP();
+    __NOP();
+    __NOP();
+    __NOP();
+    __NOP();
     US_UPDATE_PIN = 1;
-    __NOP();__NOP();__NOP();__NOP();
+    __NOP();
+    __NOP();
+    __NOP();
+    __NOP();
     US_UPDATE_PIN = 0;
 }
 void us_reset_ad9851_chip(void)
 {
-    US_RESET_PIN=0;
+    US_RESET_PIN = 0;
     delay_us(2);
-    US_RESET_PIN=1;
+    US_RESET_PIN = 1;
     delay_us(2);
-    US_RESET_PIN=0;
+    US_RESET_PIN = 0;
     delay_us(10);
 }
 
