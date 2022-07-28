@@ -3,6 +3,7 @@
 #include "sys/system.h"
 
 // Function defines
+#define ES_FUNCTION 0
 #define USE_HAL_I2C_FUNCTION 1 // 定义是否使用硬件的I2C
 
 
@@ -43,4 +44,5 @@ extern uint8_t debug_printf_flag; // 此变量由debug.c定义
 
 void empty_fun(void);
 void delay_us(uint32_t us);
+void init_global_data(void);
 #endif

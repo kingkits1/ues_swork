@@ -31,17 +31,18 @@ void US_Set_Phase(uint8_t phase)
 
 void Start_US_work(void)
 {
+    reset_us_control();
     // ad9851芯片复位
     us_reset_ad9851_chip();
     // 设置初始频率和相位
-    init_ad9851_data(&us_9851_data, 55500); // 乘以32为FPGA特别需要
+    init_ad9851_data(&us_9851_data, 55500*32); // 乘以32为FPGA特别需要
     // 设置初始功率输出值
     US_Set_Pwr(3000); // 贺工使用的是 3150
     // 打开功率输出通道
-    HAL_DAC_Start(&hdac, DAC_CHANNEL_1); //开启DAC通道2  //PA5-->US
+    HAL_DAC_Start(&hdac, DAC_CHANNEL_1); //开启DAC通道1  //PA4-->US
     // 传输频率及相位数据
     ad9851_wr_data(&us_9851_data);
-    // 是能数据
+    // 使能数据
     us_update_ad9851_freq_data();
     // 似乎是使能FPGA？不需要在这里做
 }
@@ -73,6 +74,19 @@ void us_set_power_supply(ENUM_ACTIVITY act)
     {
         PJout(14) = 0;
     }
+}
+
+void us_set_output_enable(ENUM_ACTIVITY act)
+{
+    if(act) PIout(7) = 1;
+    else PIout(7) = 0;
+}
+
+void reset_us_control(void)
+{    
+    us_set_power_supply(EM_DISABLE);
+    us_set_electric_relay(EM_DISABLE);
+    us_set_output_enable(EM_DISABLE);    
 }
 
 

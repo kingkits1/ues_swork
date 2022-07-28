@@ -71,3 +71,18 @@ __weak void general_sys_reset(void)
         __NOP();
     }
 }
+
+void init_global_data(void)
+{
+    // USART
+    // TIMER
+    // SDRAM
+    // ad9851
+    // Flash(W25Q256)
+    // WM8978
+    // FPGA
+    // US control
+    // ES control
+}
+
+

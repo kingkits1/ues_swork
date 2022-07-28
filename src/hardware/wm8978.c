@@ -44,6 +44,11 @@ uint8_t WM8978_Init(void)
     WM8978_Write_Reg(49, 1 << 2);	//R49,SPEAKER BOOST,1.5x
     WM8978_Write_Reg(10, 1 << 3);	//R10,SOFTMUTE关闭,128x采样,最佳SNR
     WM8978_Write_Reg(14, 1 << 3);	//R14,ADC 128x采样率
+
+    // zzx
+    delay_us(2000);
+    WM8978_HPvol_Set(40, 40);	    //耳机音量设置
+    WM8978_SPKvol_Set(30);		    //喇叭音量设置
     return 0;
 }
 
@@ -53,7 +58,7 @@ uint8_t WM8978_Init(void)
 //reg:寄存器地址
 //val:要写入寄存器的值
 //返回值:0,成功;
-//    其他,错误代码
+//其他,错误代码
 uint8_t WM8978_Write_Reg(uint8_t reg, uint16_t val)
 {
     uint8_t txbuf[2];
@@ -65,6 +70,11 @@ uint8_t WM8978_Write_Reg(uint8_t reg, uint16_t val)
     if(status == HAL_OK)
     {
         WM8978_REGVAL_TBL[reg] = val;	//保存寄存器值到本地
+    }
+    else
+    {
+        // zzx re-try write,for test!!!!
+        status = HAL_I2C_Mem_Write(&hi2c3, WM8978_ADDR << 1, tx_address, 1, txbuf, 1, 1000);
     }
     return status;
 }

@@ -1135,6 +1135,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\fpga\fpga_control.c</FilePath>
             </File>
+            <File>
+              <FileName>fpga_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\fpga\fpga_manager.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1170,6 +1175,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\hardware\sai.c</FilePath>
             </File>
+            <File>
+              <FileName>hardware_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\hardware\hardware_manager.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1197,6 +1207,13 @@
         </Group>
         <Group>
           <GroupName>src/sdram</GroupName>
+          <Files>
+            <File>
+              <FileName>sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\sdram\sdram.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>src/sound</GroupName>

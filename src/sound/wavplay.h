@@ -21,7 +21,7 @@ typedef __packed struct
 typedef __packed struct
 {
     uint32_t ChunkID;		   	//chunk id;这里固定为"fmt ",即0X20746D66
-    uint32_t ChunkSize ;		   	//子集合大小(不包括ID和Size);这里为:20.
+    uint32_t ChunkSize ;		   	//子集合大小(不包括ID和Size);这里为:20. zzx:0x10
     uint16_t AudioFormat;	  	//音频格式;0X01,表示线性PCM;0X11表示IMA ADPCM
     uint16_t NumOfChannels;		//通道数量;1,表示单声道;2,表示双声道;
     uint32_t SampleRate;			//采样率;0X1F40,表示8Khz
@@ -40,14 +40,14 @@ typedef __packed struct
 //LIST块
 typedef __packed struct
 {
-    uint32_t ChunkID;		   	//chunk id;这里固定为"LIST",即0X74636166;
+    uint32_t ChunkID;		   	//chunk id;这里固定为"LIST",即0X74636166;zzx:小写"list"
     uint32_t ChunkSize ;		   	//子集合大小(不包括ID和Size);这里为:4.
 } ChunkLIST;
 
 //data块
 typedef __packed struct
 {
-    uint32_t ChunkID;		   	//chunk id;这里固定为"data",即0X5453494C
+    uint32_t ChunkID;		   	//chunk id;这里固定为"data",即0X5453494C zzx:"data"0x64,0x61,0x74,0x61
     uint32_t ChunkSize ;		   	//子集合大小(不包括ID和Size)
 } ChunkDATA;
 

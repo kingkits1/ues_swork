@@ -28,6 +28,7 @@ void ES_Set_Phase(uint8_t phase)
 
 void Start_ES_work(void)
 {
+    reset_es_control();
     // ad9851芯片复位
     es_reset_ad9851_chip();
     // 设置初始频率和相位
@@ -71,5 +72,18 @@ void es_set_power_supply(ENUM_ACTIVITY act)
     {
         PBout(5) = 0;
     }
+}
+
+void es_set_output_enable(ENUM_ACTIVITY act)
+{
+    if(act) PIout(9) = 1;
+    else PIout(9) = 0;
+}
+
+void reset_es_control(void)
+{    
+    es_set_power_supply(EM_DISABLE);
+    es_set_electric_relay(EM_DISABLE);
+    es_set_output_enable(EM_DISABLE);    
 }
 
