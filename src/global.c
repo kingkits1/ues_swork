@@ -3,7 +3,7 @@
 #include "cmsis_os.h"
 #include "global.h"
 
-
+uint32_t sys_ms_count;
 __weak void empty_fun(void) {}
 /*******************************************************************************
 * º¯ Êý Ãû         : delay_us
@@ -76,6 +76,7 @@ void init_global_data(void)
 {
     // USART
     // TIMER
+    sys_ms_count=0;
     // SDRAM
     // ad9851
     // Flash(W25Q256)

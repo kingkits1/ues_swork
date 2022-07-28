@@ -9,6 +9,8 @@
 
 extern UART_HandleTypeDef huart1;
 UART_DATA_DEFINES uart1_data;
+extern UART_HandleTypeDef huart3;
+UART_DATA_DEFINES uart3_data;
 //==========
 // 函数定义
 //==========
@@ -62,6 +64,32 @@ void uartx_irq(uint8_t uart_port)
     case EM_UART_PORT_2:
         return;
     case EM_UART_PORT_3:
+        // read
+        while(__HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE))
+        {
+            uart3_data.rxbuf[uart3_data.rx_w_ptr] = huart3.Instance->DR;
+            uart3_data.rx_w_ptr ++;
+            uart3_data.rx_w_ptr &= UART_TX_RX_BUF_AND_VAL;
+        }
+
+        // write
+        if(uart3_data.tx_r_ptr != uart3_data.tx_w_ptr)
+        {
+            if(__HAL_UART_GET_FLAG(&huart3, UART_FLAG_TXE))
+            {
+                huart3.Instance->DR = uart3_data.txbuf[uart3_data.tx_r_ptr];
+                uart3_data.tx_r_ptr ++;
+                uart3_data.tx_r_ptr &= UART_TX_RX_BUF_AND_VAL;
+            }
+        }
+        else
+        {
+            //CLEAR_BIT(huart3.Instance->CR1, USART_CR1_TXEIE);
+        }
+        if(__HAL_UART_GET_FLAG(&huart3, UART_FLAG_TC))
+        {
+            CLEAR_BIT(huart3.Instance->CR1, USART_CR1_TXEIE);
+        }
         return;
     case EM_UART_PORT_4:
     case EM_UART_PORT_5:
