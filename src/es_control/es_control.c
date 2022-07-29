@@ -81,9 +81,9 @@ void es_set_output_enable(ENUM_ACTIVITY act)
 }
 
 void reset_es_control(void)
-{    
+{
     es_set_power_supply(EM_DISABLE);
     es_set_electric_relay(EM_DISABLE);
-    es_set_output_enable(EM_DISABLE);    
+    es_set_output_enable(EM_DISABLE);
 }
 

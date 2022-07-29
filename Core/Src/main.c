@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "lwip.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -44,8 +43,6 @@
  ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
-CAN_HandleTypeDef hcan1;
-
 DAC_HandleTypeDef hdac;
 
 I2C_HandleTypeDef hi2c2;
@@ -67,48 +64,12 @@ UART_HandleTypeDef huart3;
 
 SDRAM_HandleTypeDef hsdram1;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for us_es_Task */
-osThreadId_t us_es_TaskHandle;
-const osThreadAttr_t us_es_Task_attributes = {
-  .name = "us_es_Task",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
-/* Definitions for comTask */
-osThreadId_t comTaskHandle;
-const osThreadAttr_t comTask_attributes = {
-  .name = "comTask",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for fpga_Task */
-osThreadId_t fpga_TaskHandle;
-const osThreadAttr_t fpga_Task_attributes = {
-  .name = "fpga_Task",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for mainTask */
-osThreadId_t mainTaskHandle;
-const osThreadAttr_t mainTask_attributes = {
-  .name = "mainTask",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for net */
-osThreadId_t netHandle;
-const osThreadAttr_t net_attributes = {
-  .name = "net",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+osThreadId defaultTaskHandle;
+uint32_t defaultTaskBuffer[ 128 ];
+osStaticThreadDef_t defaultTaskControlBlock;
+osThreadId TaskMainHandle;
+uint32_t TaskMainBuffer[ 512 ];
+osStaticThreadDef_t TaskMainControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -119,7 +80,6 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_FMC_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_CAN1_Init(void);
 static void MX_DAC_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_I2C3_Init(void);
@@ -132,12 +92,8 @@ static void MX_USART1_UART_Init(void);
 static void MX_DMA_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_USART3_UART_Init(void);
-void StartDefaultTask(void *argument);
-void StartTask02_us_es(void *argument);
-void StartTaskCOM(void *argument);
-void StartTaskFPGA(void *argument);
-void StartTaskMain(void *argument);
-void StartTaskNet(void *argument);
+void StartDefaultTask(void const * argument);
+void StartTaskMain(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -181,7 +137,6 @@ int main(void)
   MX_GPIO_Init();
   MX_FMC_Init();
   MX_ADC1_Init();
-  MX_CAN1_Init();
   MX_DAC_Init();
   MX_I2C2_Init();
   MX_I2C3_Init();
@@ -197,9 +152,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-
-  /* Init scheduler */
-  osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -218,31 +170,17 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* definition and creation of defaultTask */
+  osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128, defaultTaskBuffer, &defaultTaskControlBlock);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* creation of us_es_Task */
-  us_es_TaskHandle = osThreadNew(StartTask02_us_es, NULL, &us_es_Task_attributes);
-
-  /* creation of comTask */
-  comTaskHandle = osThreadNew(StartTaskCOM, NULL, &comTask_attributes);
-
-  /* creation of fpga_Task */
-  fpga_TaskHandle = osThreadNew(StartTaskFPGA, NULL, &fpga_Task_attributes);
-
-  /* creation of mainTask */
-  mainTaskHandle = osThreadNew(StartTaskMain, NULL, &mainTask_attributes);
-
-  /* creation of net */
-  netHandle = osThreadNew(StartTaskNet, NULL, &net_attributes);
+  /* definition and creation of TaskMain */
+  osThreadStaticDef(TaskMain, StartTaskMain, osPriorityNormal, 0, 512, TaskMainBuffer, &TaskMainControlBlock);
+  TaskMainHandle = osThreadCreate(osThread(TaskMain), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
@@ -414,43 +352,6 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
-  * @brief CAN1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_CAN1_Init(void)
-{
-
-  /* USER CODE BEGIN CAN1_Init 0 */
-
-  /* USER CODE END CAN1_Init 0 */
-
-  /* USER CODE BEGIN CAN1_Init 1 */
-
-  /* USER CODE END CAN1_Init 1 */
-  hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
-  hcan1.Init.Mode = CAN_MODE_NORMAL;
-  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
-  hcan1.Init.TimeTriggeredMode = DISABLE;
-  hcan1.Init.AutoBusOff = DISABLE;
-  hcan1.Init.AutoWakeUp = DISABLE;
-  hcan1.Init.AutoRetransmission = DISABLE;
-  hcan1.Init.ReceiveFifoLocked = DISABLE;
-  hcan1.Init.TransmitFifoPriority = DISABLE;
-  if (HAL_CAN_Init(&hcan1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN CAN1_Init 2 */
-
-  /* USER CODE END CAN1_Init 2 */
 
 }
 
@@ -1069,6 +970,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PB4 PB13 PB12 PB2
+                           PB0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_13|GPIO_PIN_12|GPIO_PIN_2
+                          |GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA15 PA1 PA2 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : BK2_MCU_FPGA_Pin */
   GPIO_InitStruct.Pin = BK2_MCU_FPGA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
@@ -1081,6 +996,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PG11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PWR_SUPV_Pin NegPlate_InsDect_Pin ES_OVERCurrent_Pin PZT_In_Dect_Pin
                            US_OVERCurren_Pin ES_FTEN_Pin FT_MIN_Pin FT_EN_Pin */
@@ -1098,6 +1019,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOJ, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA12 PA11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : FMC_GPIO2_Pin FMC_GPIO1_Pin FMC_GPIO4_Pin FMC_GPIO3_Pin
                            FMC_GPIO5_Pin */
@@ -1169,6 +1098,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PC14 PC15 PC1 PC4
+                           PC5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_1|GPIO_PIN_4
+                          |GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pins : ES_MOD_SW_Pin US_OUT_SW_Pin US_LM5085_SW_Pin */
   GPIO_InitStruct.Pin = ES_MOD_SW_Pin|US_OUT_SW_Pin|US_LM5085_SW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -1196,12 +1133,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 PB0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
   /*Configure GPIO pin : Uni_ClotBtn_Pin */
   GPIO_InitStruct.Pin = Uni_ClotBtn_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -1228,10 +1159,8 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+void StartDefaultTask(void const * argument)
 {
-  /* init code for LWIP */
-  MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
@@ -1241,60 +1170,6 @@ void StartDefaultTask(void *argument)
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartTask02_us_es */
-/**
-* @brief Function implementing the us_es_Task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask02_us_es */
-__weak void StartTask02_us_es(void *argument)
-{
-  /* USER CODE BEGIN StartTask02_us_es */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTask02_us_es */
-}
-
-/* USER CODE BEGIN Header_StartTaskCOM */
-/**
-* @brief Function implementing the comTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTaskCOM */
-__weak void StartTaskCOM(void *argument)
-{
-  /* USER CODE BEGIN StartTaskCOM */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTaskCOM */
-}
-
-/* USER CODE BEGIN Header_StartTaskFPGA */
-/**
-* @brief Function implementing the fpga_Task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTaskFPGA */
-__weak void StartTaskFPGA(void *argument)
-{
-  /* USER CODE BEGIN StartTaskFPGA */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTaskFPGA */
-}
-
 /* USER CODE BEGIN Header_StartTaskMain */
 /**
 * @brief Function implementing the mainTask thread.
@@ -1302,7 +1177,7 @@ __weak void StartTaskFPGA(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTaskMain */
-__weak void StartTaskMain(void *argument)
+__weak void StartTaskMain(void const * argument)
 {
   /* USER CODE BEGIN StartTaskMain */
   /* Infinite loop */
@@ -1311,24 +1186,6 @@ __weak void StartTaskMain(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartTaskMain */
-}
-
-/* USER CODE BEGIN Header_StartTaskNet */
-/**
-* @brief Function implementing the net thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTaskNet */
-void StartTaskNet(void *argument)
-{
-  /* USER CODE BEGIN StartTaskNet */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTaskNet */
 }
 
 /**

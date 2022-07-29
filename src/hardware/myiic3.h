@@ -1,6 +1,6 @@
 #ifndef _MYIIC_H
 #define _MYIIC_H
-#include "sys.h"
+#include "../sys/system.h"
 
 #define SDA3_IN()  {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=0<<9*2;}	//PH5输入模式
 #define SDA3_OUT() {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=1<<9*2;} //PH5输出模式

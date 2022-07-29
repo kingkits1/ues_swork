@@ -35,7 +35,7 @@ void Start_US_work(void)
     // ad9851芯片复位
     us_reset_ad9851_chip();
     // 设置初始频率和相位
-    init_ad9851_data(&us_9851_data, 55500*32); // 乘以32为FPGA特别需要
+    init_ad9851_data(&us_9851_data, 55500 * 32); // 乘以32为FPGA特别需要
     // 设置初始功率输出值
     US_Set_Pwr(3000); // 贺工使用的是 3150
     // 打开功率输出通道
@@ -83,10 +83,10 @@ void us_set_output_enable(ENUM_ACTIVITY act)
 }
 
 void reset_us_control(void)
-{    
+{
     us_set_power_supply(EM_DISABLE);
     us_set_electric_relay(EM_DISABLE);
-    us_set_output_enable(EM_DISABLE);    
+    us_set_output_enable(EM_DISABLE);
 }
 
 

@@ -65,7 +65,7 @@ void FMC_SDRAM_WriteBuffer(uint16_t *pBuffer, uint32_t WriteAddr, uint32_t len)
     while(len--)
     {
         *(volatile uint16_t *)(Bank5_SDRAM_ADDR + WriteAddr) = *pBuffer;
-        WriteAddr+=2;
+        WriteAddr += 2;
         pBuffer++;
     }
 }
@@ -79,7 +79,7 @@ void FMC_SDRAM_ReadBuffer(uint16_t *pBuffer, uint32_t ReadAddr, uint32_t len)
     while(len--)
     {
         *pBuffer++ = *(volatile uint16_t *)(Bank5_SDRAM_ADDR + ReadAddr);
-        ReadAddr+=2;
+        ReadAddr += 2;
     }
 }
 

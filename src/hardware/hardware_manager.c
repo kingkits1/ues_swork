@@ -18,18 +18,18 @@ void init_hardware_module(void)
     HAL_TIM_Base_Start(&htim7);
     // SDRAM
     SDRAM_Initialization_Sequence(&hsdram1);
-    
+
     // WM8978
-    
+
     // FPGA
-    
+
     // US control
     Start_US_work();
-        
+
     // ES control
 #if ES_FUNCTION
     Start_ES_work();
-#endif    
+#endif
 }
 
 

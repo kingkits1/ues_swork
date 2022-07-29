@@ -33,18 +33,18 @@ void clear_fpga_data(void)
 //
 uint16_t fpga_data_check_sum1(void)
 {
-    uint16_t sum=0;
+    uint16_t sum = 0;
     uint16_t i;
-    for(i=0;i<8;i++)
+    for(i = 0; i < 8; i++)
     {
         sum ^= fpga_data_tmp.buf[i];
     }
-    return sum;    
+    return sum;
 }
 
 uint16_t fpga_data_check_sum2(void)
 {
-    uint16_t sum=0;
+    uint16_t sum = 0;
     sum ^= fpga_data_tmp.buf[4];
     sum ^= fpga_data_tmp.buf[5];
     sum ^= fpga_data_tmp.buf[8];
@@ -53,14 +53,14 @@ uint16_t fpga_data_check_sum2(void)
 
 uint8_t fpga_read_data(void)
 {
-    FMC_SDRAM_ReadBuffer(fpga_data_tmp.buf,0,9);
+    FMC_SDRAM_ReadBuffer(fpga_data_tmp.buf, 0, 9);
     // check sum
-    if(fpga_data_check_sum1()==0)
+    if(fpga_data_check_sum1() == 0)
     {
         memcpy(fpga_data.buf, fpga_data_tmp.buf, 16);
-			  return 0;
+        return 0;
     }
-		return 1;
+    return 1;
 }
 // End of File: fpga_manager.c
 

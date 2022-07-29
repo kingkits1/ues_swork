@@ -2,6 +2,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "../global.h"
+#include "stdio.h"
 #include "uart.h"
 //==========
 // 变量定义
@@ -139,6 +140,8 @@ void start_uart_port(void)
 {
     SET_BIT(huart1.Instance->CR1, USART_CR1_RXNEIE);
 }
+
+
 
 // End of uart.c
 
