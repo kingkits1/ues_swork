@@ -165,8 +165,6 @@ void Error_Handler(void);
 #define BK_ESADJ_SW_GPIO_Port GPIOJ
 #define ESMOS_EN_Pin GPIO_PIN_12
 #define ESMOS_EN_GPIO_Port GPIOD
-#define Uni_ClotBtn_Pin GPIO_PIN_13
-#define Uni_ClotBtn_GPIO_Port GPIOD
 #define SPI6_CS_PG3_ES_Pin GPIO_PIN_3
 #define SPI6_CS_PG3_ES_GPIO_Port GPIOG
 #define ES_HDLctrl_Pin GPIO_PIN_5

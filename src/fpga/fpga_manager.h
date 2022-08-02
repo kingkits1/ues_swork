@@ -1,19 +1,16 @@
 // File:fpga_manager.h
 #ifndef __FPGE_MANAGER_H
 #define __FPGE_MANAGER_H
-typedef struct
+typedef enum 
 {
-    uint16_t nodefine0   : 1;
-    uint16_t hand_min    : 1;
-    uint16_t hand_max    : 1;
-    uint16_t min_close   : 1;
-    uint16_t max_close   : 1;
-    uint16_t _close      : 1;
-    uint16_t connect     : 1;
-    uint16_t nodefine78  : 2;
-    uint16_t dis_connect : 1;
-    uint16_t abcdef      : 6;
-} ST_FPGA_HANDLE_MESSAGE;
+	EM_HANDLER_STATUS_MIN        = 1, // MIN按下
+	EM_HANDLER_STATUS_MAX        = 2, // MAX按下
+	EM_HANDLER_STATUS_MIN_CLOSE  = 3, // MIN按下且钳口闭合
+	EM_HANDLER_STATUS_MAX_CLOSE  = 4, // MAX按下且钳口闭合
+	EM_HANDLER_STATUS_ONLY_Close = 5, // 仅钳口闭合，MAX/MIN未按下，可能脚踏使用
+	EM_HANDLER_STATUS_CONNECT    = 6, //手柄接通	6
+	EM_HANDLER_STATUS_DISCONNECT = 9  //手柄断开	9
+}ENUM_HANDLER_STATUS_DEFINES;
 
 typedef struct
 {
@@ -29,7 +26,7 @@ typedef struct
     int8_t phase_trough;
     // 波谷相位差 -90° -- +90°
     int8_t phase_peak;
-    ST_FPGA_HANDLE_MESSAGE hand_msg;
+    uint16_t hand_msg;
     uint16_t xor_data_1_to_7;
     uint16_t xor_data_4_5;
     uint16_t data_available;
@@ -45,6 +42,8 @@ typedef union
 void set_fpga_read_port(bool act);
 void clear_fpga_data(void);
 uint8_t fpga_read_data(void);
+void fpga_read_buf(uint16_t *pBuffer, uint32_t ReadAddr, uint32_t len);
+void fpga_write_buf(uint16_t *pBuffer, uint32_t WriteAddr, uint32_t len);
 
 #endif
 // End of File: fpga_manager.h

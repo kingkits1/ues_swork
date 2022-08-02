@@ -33,17 +33,17 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     {
     // US
     case EM_WAV_US_CUTTING:   // US MAX 切割
-        buf = wave_data_us_max;
+        buf = (uint8_t *)wave_data_us_max;
         wavctrl.loop_sound_flag = true;
         wavctrl.actived_flag = true;
         break;
     case EM_WAV_US_HEMOSTASIS: // US MIN 止血 hemostasis
-        buf = wave_data_us_min;
+        buf = (uint8_t *)wave_data_us_min;
         wavctrl.loop_sound_flag = true;
         wavctrl.actived_flag = true;
         break;
     case EM_WAV_US_CLOSING:    // US CLOSING 钳口闭合
-        buf = wave_data_us_close;
+        buf = (uint8_t *)wave_data_us_close;
         wavctrl.loop_sound_flag = true;
         wavctrl.actived_flag = true;
         break;
@@ -68,7 +68,7 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
         break;
     // KEY pushed voice
     case EM_WAV_KEY_CLICK:
-        buf = wave_data_key_click;
+        buf = (uint8_t *)wave_data_key_click;
         wavctrl.loop_sound_flag = false;
         wavctrl.actived_flag = true;
         break;
@@ -282,7 +282,8 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
         if(wavctrl.bps == 16)
         {
             WM8978_I2S_Cfg(2, 0);	//飞利浦标准,16位数据长度
-            SAIA_Init(SAI_MODEMASTER_TX, SAI_CLOCKSTROBING_RISINGEDGE, SAI_DATASIZE_16);
+            //SAIA_Init(SAI_MODEMASTER_TX, SAI_CLOCKSTROBING_RISINGEDGE, SAI_DATASIZE_16);
+            SAIA_Init(SAI_MODEMASTER_TX, 0x200, SAI_DATASIZE_16);
             SAIA_SampleRate_Set(wavctrl.samplerate);//设置采样率
             SAIA_TX_DMA_Init(wave_play_buf1, wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
         }
@@ -311,6 +312,7 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
         wav_buffill(wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
         wavwitchbuf = 1;
         wav_buffill(wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
+		wavwitchbuf = 0;
         SAI_Play_Start();
     }
     return res;

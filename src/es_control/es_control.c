@@ -50,7 +50,7 @@ void Start_ES_work(void)
 // GPIO 控制是反着的，即 =1时是关闭
 void es_set_electric_relay(ENUM_ACTIVITY act)
 {
-    if(act == EM_DISABLE)
+    if(act == EM_ACT_DISABLE)
     {
         PDout(12) = 1;
     }
@@ -64,7 +64,7 @@ void es_set_electric_relay(ENUM_ACTIVITY act)
 // 电源控制是反着的，即 =1时是关闭电源
 void es_set_power_supply(ENUM_ACTIVITY act)
 {
-    if(act == EM_DISABLE)
+    if(act == EM_ACT_DISABLE)
     {
         PBout(5) = 1;
     }
@@ -82,8 +82,8 @@ void es_set_output_enable(ENUM_ACTIVITY act)
 
 void reset_es_control(void)
 {
-    es_set_power_supply(EM_DISABLE);
-    es_set_electric_relay(EM_DISABLE);
-    es_set_output_enable(EM_DISABLE);
+    es_set_power_supply(EM_ACT_DISABLE);
+    es_set_electric_relay(EM_ACT_DISABLE);
+    es_set_output_enable(EM_ACT_DISABLE);
 }
 

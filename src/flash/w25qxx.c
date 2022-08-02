@@ -137,6 +137,7 @@ void W25QXX1_Init(void)
             W25QXX_CS1 = 1;       		       						 //取消片选
         }
     }
+    W25QXX_CS1 = 1;
 }
 void W25QXX2_Init(void)
 {
@@ -152,6 +153,7 @@ void W25QXX2_Init(void)
             W25QXX_CS2 = 1;       		       						 //取消片选
         }
     }
+    W25QXX_CS2 = 1; 
 }
 
 

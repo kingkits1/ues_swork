@@ -1,11 +1,18 @@
 // File:wave_data_defines.h
 #ifndef __WAVE_DATA_DEFINES_H
 #define __WAVE_DATA_DEFINES_H
-extern unsigned char wave_data_us_max[];
-extern unsigned char wave_data_us_min[];
-extern unsigned char wave_data_us_close[];
-extern unsigned char wave_data_key_click[];
-
+#define __ENABLE_WAVE_DATA_DOWNLOAD 0
+#if __ENABLE_WAVE_DATA_DOWNLOAD
+extern const unsigned char wave_data_us_max[];
+extern const unsigned char wave_data_us_min[];
+extern const unsigned char wave_data_us_close[];
+extern const unsigned char wave_data_key_click[];
+#else 
+#define wave_data_us_max    ((const unsigned char *)0x8100000)
+#define wave_data_us_min    ((const unsigned char *)0x8110000)
+#define wave_data_us_close  ((const unsigned char *)0x8120000)
+#define wave_data_key_click ((const unsigned char *)0x81B0000)
+#endif
 typedef enum
 {
     // US

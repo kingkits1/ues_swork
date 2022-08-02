@@ -2,5 +2,4 @@
 #ifndef __FPGA_CONTROL_H
 #define __FPGA_CONTROL_H
 
-
 #endif

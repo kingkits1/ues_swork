@@ -4,7 +4,7 @@
 
 // Function defines
 #define ES_FUNCTION 0
-#define USE_HAL_I2C_FUNCTION 1 // 定义是否使用硬件的I2C
+#define USE_HAL_I2C_FUNCTION 0 // 定义是否使用硬件的I2C
 
 
 #define CCMRAM       __attribute__((section("RW_IRAM2")))
@@ -18,9 +18,10 @@ typedef enum
 
 typedef enum
 {
-    EM_DISABLE = 0,
-    EM_ENABLE = 1
+    EM_ACT_DISABLE = 0,
+    EM_ACT_ENABLE = 1
 } ENUM_ACTIVITY;
+
 typedef enum
 {
     false,

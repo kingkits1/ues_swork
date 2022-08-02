@@ -5,9 +5,8 @@
 #include "../flash/w25qxx.h"
 #include "../us_control/us_control.h"
 #include "../es_control/es_control.h"
-#include "../sdram/sdram.h"
+void WM8978_Init(void);
 extern TIM_HandleTypeDef htim7;
-extern SDRAM_HandleTypeDef hsdram1;
 void init_hardware_module(void)
 {
     // USART
@@ -15,14 +14,15 @@ void init_hardware_module(void)
     W25QXX1_Init();
     W25QXX2_Init();
     // TIMER
-    HAL_TIM_Base_Start(&htim7);
+    HAL_TIM_Base_Start_IT(&htim7);
     // SDRAM
-    SDRAM_Initialization_Sequence(&hsdram1);
-
+    //SDRAM_Initialization_Sequence(&hsdram1);
+    // SRAM
+    
     // WM8978
-
+    WM8978_Init();
     // FPGA
-
+    
     // US control
     Start_US_work();
 

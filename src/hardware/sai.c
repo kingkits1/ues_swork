@@ -6,8 +6,8 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 
-SAI_HandleTypeDef SAI1A_Handler;        //SAI1 Block A句柄
-DMA_HandleTypeDef SAI1_TXDMA_Handler;   //DMA发送句柄
+extern SAI_HandleTypeDef hsai_BlockA1;        //SAI1 Block A句柄
+extern DMA_HandleTypeDef hdma_sai1_a;   //DMA发送句柄
 
 //SAI Block A初始化,I2S,飞利浦标准
 //mode:工作模式,可以设置:SAI_MODEMASTER_TX/SAI_MODEMASTER_RX/SAI_MODESLAVE_TX/SAI_MODESLAVE_RX
@@ -15,35 +15,35 @@ DMA_HandleTypeDef SAI1_TXDMA_Handler;   //DMA发送句柄
 //datalen:数据大小,可以设置：SAI_DATASIZE_8/10/16/20/24/32
 void SAIA_Init(uint32_t mode, uint32_t cpol, uint32_t datalen)
 {
-    HAL_SAI_DeInit(&SAI1A_Handler);                          //清除以前的配置
-    SAI1A_Handler.Instance = SAI1_Block_A;                   //SAI1 Bock A
-    SAI1A_Handler.Init.AudioMode = mode;                     //设置SAI1工作模式
-    SAI1A_Handler.Init.Synchro = SAI_ASYNCHRONOUS;           //音频模块异步
-    SAI1A_Handler.Init.OutputDrive = SAI_OUTPUTDRIVE_ENABLE; //立即驱动音频模块输出
-    SAI1A_Handler.Init.NoDivider = SAI_MASTERDIVIDER_ENABLE; //使能主时钟分频器(MCKDIV)
-    SAI1A_Handler.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_1QF; //设置FIFO阈值,1/4 FIFO
-    SAI1A_Handler.Init.ClockSource = SAI_CLKSOURCE_PLLI2S;   //SIA时钟源为PLL2S
-    SAI1A_Handler.Init.MonoStereoMode = SAI_STEREOMODE;      //立体声模式
-    SAI1A_Handler.Init.Protocol = SAI_FREE_PROTOCOL;         //设置SAI1协议为:自由协议(支持I2S/LSB/MSB/TDM/PCM/DSP等协议)
-    SAI1A_Handler.Init.DataSize = datalen;                   //设置数据大小
-    SAI1A_Handler.Init.FirstBit = SAI_FIRSTBIT_MSB;          //数据MSB位优先
-    SAI1A_Handler.Init.ClockStrobing = cpol;                 //数据在时钟的上升/下降沿选通
+    HAL_SAI_DeInit(&hsai_BlockA1);                          //清除以前的配置
+    hsai_BlockA1.Instance = SAI1_Block_A;                   //SAI1 Bock A
+    hsai_BlockA1.Init.AudioMode = mode;                     //设置SAI1工作模式
+    hsai_BlockA1.Init.Synchro = SAI_ASYNCHRONOUS;           //音频模块异步
+    hsai_BlockA1.Init.OutputDrive = SAI_OUTPUTDRIVE_ENABLE; //立即驱动音频模块输出
+    hsai_BlockA1.Init.NoDivider = SAI_MASTERDIVIDER_ENABLE; //使能主时钟分频器(MCKDIV)
+    hsai_BlockA1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_1QF; //设置FIFO阈值,1/4 FIFO
+    hsai_BlockA1.Init.ClockSource = SAI_CLKSOURCE_PLLI2S;   //SIA时钟源为PLL2S
+    hsai_BlockA1.Init.MonoStereoMode = SAI_STEREOMODE;      //立体声模式
+    hsai_BlockA1.Init.Protocol = SAI_FREE_PROTOCOL;         //设置SAI1协议为:自由协议(支持I2S/LSB/MSB/TDM/PCM/DSP等协议)
+    hsai_BlockA1.Init.DataSize = datalen;                   //设置数据大小
+    hsai_BlockA1.Init.FirstBit = SAI_FIRSTBIT_MSB;          //数据MSB位优先
+    hsai_BlockA1.Init.ClockStrobing = cpol;                 //数据在时钟的上升/下降沿选通
 
     //帧设置
-    SAI1A_Handler.FrameInit.FrameLength = 64;                //设置帧长度为64,左通道32个SCK,右通道32个SCK.
-    SAI1A_Handler.FrameInit.ActiveFrameLength = 32;          //设置帧同步有效电平长度,在I2S模式下=1/2帧长.
-    SAI1A_Handler.FrameInit.FSDefinition = SAI_FS_CHANNEL_IDENTIFICATION; //FS信号为SOF信号+通道识别信号
-    SAI1A_Handler.FrameInit.FSPolarity = SAI_FS_ACTIVE_LOW;  //FS低电平有效(下降沿)
-    SAI1A_Handler.FrameInit.FSOffset = SAI_FS_BEFOREFIRSTBIT; //在slot0的第一位的前一位使能FS,以匹配飞利浦标准
+    hsai_BlockA1.FrameInit.FrameLength = 64;                //设置帧长度为64,左通道32个SCK,右通道32个SCK.
+    hsai_BlockA1.FrameInit.ActiveFrameLength = 32;          //设置帧同步有效电平长度,在I2S模式下=1/2帧长.
+    hsai_BlockA1.FrameInit.FSDefinition = SAI_FS_CHANNEL_IDENTIFICATION; //FS信号为SOF信号+通道识别信号
+    hsai_BlockA1.FrameInit.FSPolarity = SAI_FS_ACTIVE_LOW;  //FS低电平有效(下降沿)
+    hsai_BlockA1.FrameInit.FSOffset = SAI_FS_BEFOREFIRSTBIT; //在slot0的第一位的前一位使能FS,以匹配飞利浦标准
 
     //SLOT设置
-    SAI1A_Handler.SlotInit.FirstBitOffset = 0;               //slot偏移(FBOFF)为0
-    SAI1A_Handler.SlotInit.SlotSize = SAI_SLOTSIZE_32B;      //slot大小为32位
-    SAI1A_Handler.SlotInit.SlotNumber = 2;                   //slot数为2个
-    SAI1A_Handler.SlotInit.SlotActive = SAI_SLOTACTIVE_0 | SAI_SLOTACTIVE_1; //使能slot0和slot1
+    hsai_BlockA1.SlotInit.FirstBitOffset = 0;               //slot偏移(FBOFF)为0
+    hsai_BlockA1.SlotInit.SlotSize = SAI_SLOTSIZE_32B;      //slot大小为32位
+    hsai_BlockA1.SlotInit.SlotNumber = 2;                   //slot数为2个
+    hsai_BlockA1.SlotInit.SlotActive = SAI_SLOTACTIVE_0 | SAI_SLOTACTIVE_1; //使能slot0和slot1
 
-    HAL_SAI_Init(&SAI1A_Handler);                            //初始化SAI
-    __HAL_SAI_ENABLE(&SAI1A_Handler);                        //使能SAI
+    HAL_SAI_Init(&hsai_BlockA1);                            //初始化SAI
+    __HAL_SAI_ENABLE(&hsai_BlockA1);                        //使能SAI
 }
 
 #if 0
@@ -124,11 +124,11 @@ uint8_t SAIA_SampleRate_Set(uint32_t samplerate)
 
     __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S); //设置SAI1时钟来源为PLLI2SQ
 
-    __HAL_SAI_DISABLE(&SAI1A_Handler);                          //关闭SAI
-    SAI1A_Handler.Init.AudioFrequency = samplerate;             //设置播放频率
-    HAL_SAI_Init(&SAI1A_Handler);                               //初始化SAI
+    __HAL_SAI_DISABLE(&hsai_BlockA1);                          //关闭SAI
+    hsai_BlockA1.Init.AudioFrequency = samplerate;             //设置播放频率
+    HAL_SAI_Init(&hsai_BlockA1);                               //初始化SAI
     SAIA_DMA_Enable();                                          //开启SAI的DMA功能
-    __HAL_SAI_ENABLE(&SAI1A_Handler);                           //开启SAI
+    __HAL_SAI_ENABLE(&hsai_BlockA1);                           //开启SAI
     return 0;
 }
 
@@ -158,27 +158,27 @@ void SAIA_TX_DMA_Init(uint8_t *buf0, uint8_t *buf1, uint16_t num, uint8_t width)
 
     }
     __HAL_RCC_DMA2_CLK_ENABLE();                                    //使能DMA2时钟
-    __HAL_LINKDMA(&SAI1A_Handler, hdmatx, SAI1_TXDMA_Handler);       //将DMA与SAI联系起来
-    SAI1_TXDMA_Handler.Instance = DMA2_Stream3;                     //DMA2数据流3
-    SAI1_TXDMA_Handler.Init.Channel = DMA_CHANNEL_0;                //通道0
-    SAI1_TXDMA_Handler.Init.Direction = DMA_MEMORY_TO_PERIPH;       //存储器到外设模式
-    SAI1_TXDMA_Handler.Init.PeriphInc = DMA_PINC_DISABLE;           //外设非增量模式
-    SAI1_TXDMA_Handler.Init.MemInc = DMA_MINC_ENABLE;               //存储器增量模式
-    SAI1_TXDMA_Handler.Init.PeriphDataAlignment = perwidth;         //外设数据长度:16/32位
-    SAI1_TXDMA_Handler.Init.MemDataAlignment = memwidth;            //存储器数据长度:16/32位
-    SAI1_TXDMA_Handler.Init.Mode = DMA_CIRCULAR;                    //使用循环模式
-    SAI1_TXDMA_Handler.Init.Priority = DMA_PRIORITY_HIGH;           //高优先级
-    SAI1_TXDMA_Handler.Init.FIFOMode = DMA_FIFOMODE_DISABLE;        //不使用FIFO
-    SAI1_TXDMA_Handler.Init.MemBurst = DMA_MBURST_SINGLE;           //存储器单次突发传输
-    SAI1_TXDMA_Handler.Init.PeriphBurst = DMA_PBURST_SINGLE;        //外设突发单次传输
-    HAL_DMA_DeInit(&SAI1_TXDMA_Handler);                            //先清除以前的设置
-    HAL_DMA_Init(&SAI1_TXDMA_Handler);	                            //初始化DMA
+    __HAL_LINKDMA(&hsai_BlockA1, hdmatx, hdma_sai1_a);       //将DMA与SAI联系起来
+    hdma_sai1_a.Instance = DMA2_Stream3;                     //DMA2数据流3
+    hdma_sai1_a.Init.Channel = DMA_CHANNEL_0;                //通道0
+    hdma_sai1_a.Init.Direction = DMA_MEMORY_TO_PERIPH;       //存储器到外设模式
+    hdma_sai1_a.Init.PeriphInc = DMA_PINC_DISABLE;           //外设非增量模式
+    hdma_sai1_a.Init.MemInc = DMA_MINC_ENABLE;               //存储器增量模式
+    hdma_sai1_a.Init.PeriphDataAlignment = perwidth;         //外设数据长度:16/32位
+    hdma_sai1_a.Init.MemDataAlignment = memwidth;            //存储器数据长度:16/32位
+    hdma_sai1_a.Init.Mode = DMA_CIRCULAR;                    //使用循环模式
+    hdma_sai1_a.Init.Priority = DMA_PRIORITY_HIGH;           //高优先级
+    hdma_sai1_a.Init.FIFOMode = DMA_FIFOMODE_DISABLE;        //不使用FIFO
+    hdma_sai1_a.Init.MemBurst = DMA_MBURST_SINGLE;           //存储器单次突发传输
+    hdma_sai1_a.Init.PeriphBurst = DMA_PBURST_SINGLE;        //外设突发单次传输
+    HAL_DMA_DeInit(&hdma_sai1_a);                            //先清除以前的设置
+    HAL_DMA_Init(&hdma_sai1_a);	                            //初始化DMA
 
-    HAL_DMAEx_MultiBufferStart(&SAI1_TXDMA_Handler, (uint32_t)buf0, (uint32_t)&SAI1_Block_A->DR, (uint32_t)buf1, num); //开启双缓冲
-    __HAL_DMA_DISABLE(&SAI1_TXDMA_Handler);                         //先关闭DMA
+    HAL_DMAEx_MultiBufferStart(&hdma_sai1_a, (uint32_t)buf0, (uint32_t)&SAI1_Block_A->DR, (uint32_t)buf1, num); //开启双缓冲
+    __HAL_DMA_DISABLE(&hdma_sai1_a);                         //先关闭DMA
     delay_us(10);                                                   //10us延时，防止-O2优化出问题
-    __HAL_DMA_ENABLE_IT(&SAI1_TXDMA_Handler, DMA_IT_TC);            //开启传输完成中断
-    __HAL_DMA_CLEAR_FLAG(&SAI1_TXDMA_Handler, DMA_FLAG_TCIF3_7);    //清除DMA传输完成中断标志位
+    __HAL_DMA_ENABLE_IT(&hdma_sai1_a, DMA_IT_TC);            //开启传输完成中断
+    __HAL_DMA_CLEAR_FLAG(&hdma_sai1_a, DMA_FLAG_TCIF3_7);    //清除DMA传输完成中断标志位
     HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0, 0);                  //DMA中断优先级
     HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
 }
@@ -188,20 +188,20 @@ void (*sai_tx_callback)(void);	//TX回调函数
 //DMA2_Stream3中断服务函数
 void DMA2_Stream3_IRQHandler(void)
 {
-    if(__HAL_DMA_GET_FLAG(&SAI1_TXDMA_Handler, DMA_FLAG_TCIF3_7) != RESET) //DMA传输完成
+    if(__HAL_DMA_GET_FLAG(&hdma_sai1_a, DMA_FLAG_TCIF3_7) != RESET) //DMA传输完成
     {
-        __HAL_DMA_CLEAR_FLAG(&SAI1_TXDMA_Handler, DMA_FLAG_TCIF3_7);    //清除DMA传输完成中断标志位
+        __HAL_DMA_CLEAR_FLAG(&hdma_sai1_a, DMA_FLAG_TCIF3_7);    //清除DMA传输完成中断标志位
         sai_tx_callback();	//执行回调函数,读取数据等操作在这里面处理
     }
 }
 //SAI开始播放
 void SAI_Play_Start(void)
 {
-    __HAL_DMA_ENABLE(&SAI1_TXDMA_Handler);//开启DMA TX传输
+    __HAL_DMA_ENABLE(&hdma_sai1_a);//开启DMA TX传输
 }
 //关闭I2S播放
 void SAI_Play_Stop(void)
 {
-    __HAL_DMA_DISABLE(&SAI1_TXDMA_Handler);  //结束播放
+    __HAL_DMA_DISABLE(&hdma_sai1_a);  //结束播放
 }
 

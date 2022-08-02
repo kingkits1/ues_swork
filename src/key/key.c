@@ -111,5 +111,15 @@ bool is_es_min_actived(void)
     return key_val.es_active_flag;
 }
 
+void set_hand_close_status(bool status)
+{
+	if(status) key_val.key.bits.hand_close = 1;
+	else key_val.key.bits.hand_close = 0;
+}
+void set_handmaxmin_val(uint16_t hmax, uint16_t hmin)
+{
+    key_val.key.bits.hand_max = hmax;
+    key_val.key.bits.hand_min = hmin;
+}
 // End of File:key.c
 

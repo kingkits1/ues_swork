@@ -2,6 +2,7 @@
 #include "cmsis_os.h"
 #include "../global.h"
 #include "fpga_control.h"
+#include "stm32f4xx_hal_sdram.h"
 
 // us 允许fpga输出频率 = 1
 // us 禁止fpga输出频率 = 0
@@ -21,7 +22,7 @@ void es_set_fpga_freq(ENUM_ACTIVITY act)
 //
 void set_fpga_ram_port(ENUM_ACTIVITY act)
 {
-    if(act == EM_DISABLE)
+    if(act == EM_ACT_DISABLE)
     {
         PIout(8) = 1;
     }

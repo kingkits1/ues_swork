@@ -33,9 +33,10 @@ typedef struct
     uint16_t foot_min: 1;
     uint16_t hand_max: 1;
     uint16_t hand_min: 1;
+	uint16_t hand_close:1;
     // ¸ßÆµµçµ¶²Ù×÷ TODO:
     uint16_t elect_action: 1;
-    uint16_t unused  : 11;
+    uint16_t unused  : 10;
 } ST_KEY_BIT_DEFINES;
 
 typedef union
@@ -62,6 +63,8 @@ void check_key_actions(uint16_t key);
 bool is_us_max_actived(void);
 bool is_us_min_actived(void);
 bool is_es_min_actived(void);
+void set_handmaxmin_val(uint16_t hmax, uint16_t hmin);
+void set_hand_close_status(bool status);
 
 #endif
 

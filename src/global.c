@@ -5,6 +5,7 @@
 #include "stdio.h"
 uint32_t sys_ms_count;
 __weak void empty_fun(void) {}
+void short_delay(unsigned int count);
 /*******************************************************************************
 * 函 数 名         : delay_us
 * 函数功能           : 延时函数，延时us
@@ -14,6 +15,7 @@ __weak void empty_fun(void) {}
 *******************************************************************************/
 void delay_us(uint32_t us)
 {
+#if 0
     uint32_t temp;
     SysTick->LOAD = 45 * us;     //设置重装数值, 72MHZ时
     SysTick->CTRL = 0X01;       //使能，减到零是无动作，采用外部时钟源
@@ -25,6 +27,9 @@ void delay_us(uint32_t us)
     while((temp & 0x01) && (!(temp & (1 << 16)))); //等待时间到达
     SysTick->CTRL = 0;  //关闭计数器
     SysTick->VAL = 0;      //清空计数器
+#else
+    short_delay(us);
+#endif
 }
 
 void short_delay(unsigned int count)
@@ -32,6 +37,54 @@ void short_delay(unsigned int count)
     // 延时16个时钟？？ n x 16 + 10
     while(count--)
     {
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
+        __asm("\tnop");
         __asm("\tnop");
         __asm("\tnop");
         __asm("\tnop");
