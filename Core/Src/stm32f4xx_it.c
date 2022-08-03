@@ -44,7 +44,7 @@ void uartx_irq(uint8_t uart_port);
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 extern uint32_t sys_ms_count;
-
+extern uint32_t sys_us_count;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +63,6 @@ extern DAC_HandleTypeDef hdac;
 extern I2C_HandleTypeDef hi2c2;
 extern I2C_HandleTypeDef hi2c3;
 extern DMA_HandleTypeDef hdma_sai1_a;
-extern SAI_HandleTypeDef hsai_BlockA1;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim11;
 extern UART_HandleTypeDef huart1;
@@ -198,7 +197,7 @@ void SysTick_Handler(void)
 void TIM1_TRG_COM_TIM11_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 0 */
-
+  sys_us_count++;
   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
   HAL_TIM_IRQHandler(&htim11);
   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
@@ -344,20 +343,6 @@ void I2C3_ER_IRQHandler(void)
   /* USER CODE BEGIN I2C3_ER_IRQn 1 */
 
   /* USER CODE END I2C3_ER_IRQn 1 */
-}
-
-/**
-  * @brief This function handles SAI1 global interrupt.
-  */
-void SAI1_IRQHandler(void)
-{
-  /* USER CODE BEGIN SAI1_IRQn 0 */
-
-  /* USER CODE END SAI1_IRQn 0 */
-  HAL_SAI_IRQHandler(&hsai_BlockA1);
-  /* USER CODE BEGIN SAI1_IRQn 1 */
-
-  /* USER CODE END SAI1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

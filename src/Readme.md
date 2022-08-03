@@ -136,8 +136,7 @@ III. SDRAM 数据解析！！
 
 # 2022-8-1
 ----
-<font color=green></font>
-<font color=red></font>
+
 1. <font color=green>系统崩溃的问题已经解决</font>
 2. <font color=green>解决程序下载代码过大的问题，因为高位1M的FLASH固定为音乐代码，所以，可以考虑只下载低位1M的内容。</font>
 3. 先调试UART供测试！！！ 测试完成！！！
@@ -145,3 +144,41 @@ III. SDRAM 数据解析！！
 5. SDRAM　测试有问题！！！
 6. <font color=red>经过验证，是使用SRAM接口！！！</font>
 7. 
+
+# 2022-8-2
+----
+<font color=green></font>
+<font color=red></font>
+1. <font color=red>SRAM地址线未定义！！。</font><font color=green>已经解决！！</font>
+2. 开始调试声音！！！
+3. 声音出来了，但声音不对
+
+# 2022-8-3
+-----
+1. 尝试使用完全的示例代码环境
+  - [] TODO: 使用OLD代码中的声音数据
+  - [] TODO: 完整复制声音播放代码！！
+  - [x] TODO: 开始处理单声道数据
+  - [] TODO: 似乎单声道数据还是没能处理，尝试把单声道数据变成双声道数据！
+  - [x] 去掉系统生成的SAI模块，使用例程中的数据
+       - 需要修正文件 stm32f4xx_hal_conf.h
+         
+         #define HAL_SAI_MODULE_ENABLED
+       - 并添加SAI相关驱动代码
+
+2. HSE后面主时钟分频系数修正为示例状态
+   （360 25 2 8）
+3. 比较WAV文件头数据，没有问题
+4. 比较play_wav 设置DMA之前的REG内容
+5. 这是当前版本的 
+   
+   ![](./markdownpic/sai_reg_new.png)
+6. 这是例程版本的
+   
+    ![](./markdownpic/sai_reg_old.png)
+
+    可看到 AFRCR和ASLOTR存在差异
+    ![](./markdownpic/sai_reg_old1.png)
+
+    明天研读参考手册
+     hsai_BlockA1.Init.ClockStrobing 需要修改一下？？？

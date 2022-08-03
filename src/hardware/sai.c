@@ -77,6 +77,22 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef *hsai)
 //PLLI2SDIVQ:0~31
 //MCKDIV:0~15
 //SAI A分频系数表@pllm=25,HSE=25Mhz,即vco输入频率为1Mhz
+#if 0
+const uint16_t SAI_PSC_TBL[][5] =
+{
+    {800 , 344, 7, 0, 12},	//8Khz采样率
+    {1102, 429, 2, 18, 2},	//11.025Khz采样率
+    {1600, 344, 7, 0, 6},	//16Khz采样率
+    {2205, 429, 2, 18, 1},	//22.05Khz采样率
+    {3200, 344, 7, 0, 3},	//32Khz采样率
+    {4410, 429, 2, 18, 0},	//44.1Khz采样率
+    {4800, 344, 7, 0, 2},	//48Khz采样率
+    {8820, 271, 2, 2, 1},	//88.2Khz采样率
+    {9600, 344, 7, 0, 1},	//96Khz采样率
+    {17640, 271, 2, 2, 0},	//176.4Khz采样率
+    {19200, 344, 7, 0, 0},	//192Khz采样率
+};
+#else
 const uint16_t SAI_PSC_TBL[][5] =
 {
     {800 , 344, 7, 0, 12},	//8Khz采样率
@@ -92,6 +108,7 @@ const uint16_t SAI_PSC_TBL[][5] =
     {19200, 344, 7, 0, 0},	//192Khz采样率
 };
 
+#endif
 //开启SAI的DMA功能,HAL库没有提供此函数
 //因此我们需要自己操作寄存器编写一个
 void SAIA_DMA_Enable(void)
@@ -122,11 +139,13 @@ uint8_t SAIA_SampleRate_Set(uint32_t samplerate)
     RCCSAI1_Sture.PLLI2SDivQ = SAI_PSC_TBL[i][3] + 1;           //设置PLLI2SDIVQ
     HAL_RCCEx_PeriphCLKConfig(&RCCSAI1_Sture);                  //设置时钟
 
+	
+#if 0
     __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S); //设置SAI1时钟来源为PLLI2SQ
-
     __HAL_SAI_DISABLE(&hsai_BlockA1);                          //关闭SAI
     hsai_BlockA1.Init.AudioFrequency = samplerate;             //设置播放频率
     HAL_SAI_Init(&hsai_BlockA1);                               //初始化SAI
+#endif
     SAIA_DMA_Enable();                                          //开启SAI的DMA功能
     __HAL_SAI_ENABLE(&hsai_BlockA1);                           //开启SAI
     return 0;

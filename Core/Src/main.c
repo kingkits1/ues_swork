@@ -95,7 +95,6 @@ static void MX_ADC1_Init(void);
 static void MX_DAC_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_I2C3_Init(void);
-static void MX_SAI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_SPI5_Init(void);
@@ -106,6 +105,7 @@ static void MX_TIM7_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_FMC_Init(void);
 static void MX_TIM11_Init(void);
+static void MX_SAI1_Init(void);
 void StartDefaultTask(void *argument);
 void StartTaskMain(void *argument);
 
@@ -150,7 +150,6 @@ int main(void)
   MX_DAC_Init();
   MX_I2C2_Init();
   MX_I2C3_Init();
-  MX_SAI1_Init();
   MX_SPI2_Init();
   MX_SPI3_Init();
   MX_SPI5_Init();
@@ -161,6 +160,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_FMC_Init();
   MX_TIM11_Init();
+  MX_SAI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -225,7 +225,7 @@ void SystemClock_Config(void)
 
   /** Macro to configure SAI1BlockA clock source selection
   */
-  __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(SAI_CLKSOURCE_PLLSAI);
+  __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(SAI_CLKSOURCE_PLLI2S);
 
   /** Configure the main internal regulator output voltage
   */
@@ -239,8 +239,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 15;
-  RCC_OscInitStruct.PLL.PLLN = 216;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 360;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -513,16 +513,16 @@ static void MX_SAI1_Init(void)
   hsai_BlockA1.Init.FirstBit = SAI_FIRSTBIT_MSB;
   hsai_BlockA1.Init.ClockStrobing = SAI_CLOCKSTROBING_FALLINGEDGE;
   hsai_BlockA1.Init.Synchro = SAI_ASYNCHRONOUS;
-  hsai_BlockA1.Init.OutputDrive = SAI_OUTPUTDRIVE_DISABLE;
+  hsai_BlockA1.Init.OutputDrive = SAI_OUTPUTDRIVE_ENABLE;
   hsai_BlockA1.Init.NoDivider = SAI_MASTERDIVIDER_ENABLE;
-  hsai_BlockA1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_EMPTY;
-  hsai_BlockA1.Init.ClockSource = SAI_CLKSOURCE_PLLSAI;
+  hsai_BlockA1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_1QF;
+  hsai_BlockA1.Init.ClockSource = SAI_CLKSOURCE_PLLI2S;
   hsai_BlockA1.Init.AudioFrequency = SAI_AUDIO_FREQUENCY_44K;
-  hsai_BlockA1.FrameInit.FrameLength = 32;
-  hsai_BlockA1.FrameInit.ActiveFrameLength = 1;
-  hsai_BlockA1.FrameInit.FSDefinition = SAI_FS_STARTFRAME;
+  hsai_BlockA1.FrameInit.FrameLength = 64;
+  hsai_BlockA1.FrameInit.ActiveFrameLength = 32;
+  hsai_BlockA1.FrameInit.FSDefinition = SAI_FS_CHANNEL_IDENTIFICATION;
   hsai_BlockA1.FrameInit.FSPolarity = SAI_FS_ACTIVE_LOW;
-  hsai_BlockA1.FrameInit.FSOffset = SAI_FS_FIRSTBIT;
+  hsai_BlockA1.FrameInit.FSOffset = SAI_FS_BEFOREFIRSTBIT;
   hsai_BlockA1.SlotInit.FirstBitOffset = 0;
   hsai_BlockA1.SlotInit.SlotSize = SAI_SLOTSIZE_DATASIZE;
   hsai_BlockA1.SlotInit.SlotNumber = 2;
@@ -855,7 +855,7 @@ static void MX_FMC_Init(void)
   FMC_NORSRAM_TimingTypeDef ExtTiming = {0};
 
   /* USER CODE BEGIN FMC_Init 1 */
-
+#if 1
   /* USER CODE END FMC_Init 1 */
 
   /** Perform the SRAM1 memory initialization sequence
@@ -901,6 +901,10 @@ static void MX_FMC_Init(void)
   }
 
   /* USER CODE BEGIN FMC_Init 2 */
+#else
+	void SDRAM_Init(void);
+	SDRAM_Init();
+#endif
 
   /* USER CODE END FMC_Init 2 */
 }

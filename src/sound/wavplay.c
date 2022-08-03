@@ -29,6 +29,7 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     ChunkDATA *data;
 
     wavctrl.actived_flag = false;
+	buf = wave_file_head;
     switch(wav_type)
     {
     // US
@@ -108,7 +109,7 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     wavctrl.audioformat = fmt->AudioFormat;		//音频格式
     wavctrl.nchannels = fmt->NumOfChannels;		//通道数
     wavctrl.samplerate = fmt->SampleRate;		//采样率
-    wavctrl.bitrate = fmt->ByteRate * 8;			//得到位速
+    wavctrl.bitrate = fmt->ByteRate * 8;		//得到位速
     wavctrl.blockalign = fmt->BlockAlign;		//块对齐
     wavctrl.bps = fmt->BitsPerSample;			//位数,16/24/32位
 
@@ -148,6 +149,7 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
         count = 0;
         while(readlen < size)
         {
+        	#if 0
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
@@ -160,6 +162,30 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
                 *pbuf = 0;
                 readlen ++;
             }
+			#else
+			// byte 0
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 1
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 2
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 3 empty with 0
+			*pbuf = 0;
+			pbuf++;
+			readlen ++;
+			#endif
             if(wavctrl.current_data >= wavctrl.data_end)
             {
                 if(wavctrl.loop_sound_flag == true)
@@ -192,10 +218,17 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
     {
         while(readlen < size)
         {
+        	// byte 0  0-7bit
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
+			// byte 1 8-15bit
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+			
             if(wavctrl.current_data >= wavctrl.data_end)
             {
                 if(wavctrl.loop_sound_flag == true)
@@ -204,22 +237,22 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
                 }
                 else
                 {
-                    // 填充0，并返回播放完成
+                    // 先填充0，并返回播放完成
                     while(readlen++ < size)
                     {
                         *pbuf = 0;
                         pbuf++;
-                        //TODO: !!!!// 设置停止标志
-                        if(wavwitchbuf == 0)
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
-                        }
-                        else
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
-                        }
-                        return readlen;
                     }
+				    //TODO: !!!!// 设置停止标志
+                    if(wavwitchbuf == 0)
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
+                    }
+                    else
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
+                    }
+                    return readlen;
                 }
             }
         }
@@ -232,7 +265,7 @@ void wav_sai_dma_tx_callback(void)
     if(DMA2_Stream3->CR & (1 << 19))
     {
         wavwitchbuf = 0;
-        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END0)
+        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END1)
         {
             wav_buffill(wave_play_buf1, 4096);
         }
@@ -246,7 +279,7 @@ void wav_sai_dma_tx_callback(void)
     else
     {
         wavwitchbuf = 1;
-        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END1)
+        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END0)
         {
             wav_buffill(wave_play_buf2, 4096);
         }
@@ -283,10 +316,11 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
         {
             WM8978_I2S_Cfg(2, 0);	//飞利浦标准,16位数据长度
             //SAIA_Init(SAI_MODEMASTER_TX, SAI_CLOCKSTROBING_RISINGEDGE, SAI_DATASIZE_16);
-            SAIA_Init(SAI_MODEMASTER_TX, 0x200, SAI_DATASIZE_16);
+            //SAIA_Init(SAI_MODEMASTER_TX, 0x200, SAI_DATASIZE_16);
             SAIA_SampleRate_Set(wavctrl.samplerate);//设置采样率
             SAIA_TX_DMA_Init(wave_play_buf1, wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
         }
+#if 0
         else if(wavctrl.bps == 24)
         {
             WM8978_I2S_Cfg(2, 2);	//飞利浦标准,24位数据长度
@@ -294,6 +328,7 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
             SAIA_SampleRate_Set(wavctrl.samplerate);//设置采样率
             SAIA_TX_DMA_Init(wave_play_buf1, wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 4, 2); //配置TX DMA,32位
         }
+#endif
         else
         {
             // error format！！！
