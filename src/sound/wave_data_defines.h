@@ -13,7 +13,7 @@ extern const unsigned char wave_data_key_click[];
 #define wave_data_us_close  ((const unsigned char *)0x8120000)
 #define wave_data_key_click ((const unsigned char *)0x81B0000)
 #endif
-typedef enum
+typedef enum	
 {
     // US
     EM_WAV_US_CUTTING,    // US MAX ÇÐ¸î

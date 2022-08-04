@@ -3,7 +3,9 @@
 #include "cmsis_os.h"
 #include "global.h"
 #include "stdio.h"
-uint32_t sys_ms_count;
+volatile uint32_t sys_ms_count;
+volatile uint32_t sys_us_count;
+
 __weak void empty_fun(void) {}
 void short_delay(unsigned int count);
 /*******************************************************************************
@@ -13,6 +15,7 @@ void short_delay(unsigned int count);
 * 输    出         : 无
 * 独占SysTick资源
 *******************************************************************************/
+extern TIM_HandleTypeDef htim11;
 void delay_us(uint32_t us)
 {
 #if 0

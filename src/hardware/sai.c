@@ -138,9 +138,9 @@ uint8_t SAIA_SampleRate_Set(uint32_t samplerate)
     //设置PLLI2SDivQ的时候SAI_PSC_TBL[i][3]要加1，因为HAL库中会在把PLLI2SDivQ赋给寄存器DCKCFGR的时候减1
     RCCSAI1_Sture.PLLI2SDivQ = SAI_PSC_TBL[i][3] + 1;           //设置PLLI2SDIVQ
     HAL_RCCEx_PeriphCLKConfig(&RCCSAI1_Sture);                  //设置时钟
-
+	delay_us(10);
 	
-#if 0
+#if 1
     __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S); //设置SAI1时钟来源为PLLI2SQ
     __HAL_SAI_DISABLE(&hsai_BlockA1);                          //关闭SAI
     hsai_BlockA1.Init.AudioFrequency = samplerate;             //设置播放频率

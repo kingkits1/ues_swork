@@ -135,7 +135,12 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
     uint8_t *pbuf;
     uint8_t count;
     // 如果音频数据未准备好，则直接返回！！！
-    if(wavctrl.actived_flag == false)	return 0;
+    if(wavctrl.actived_flag == false)
+    {
+    	// Stop DMA
+        SAI_Play_Stop();
+		return 0;
+    }
 
     pbuf = buf;
     if(wavctrl.bps == 24) //24bit音频,需要处理一下
@@ -231,18 +236,18 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
 			
             if(wavctrl.current_data >= wavctrl.data_end)
             {
+            	// 先填充0，并返回播放完成
+                while(readlen++ < size)
+                {
+                    *pbuf = 0;
+                    pbuf++;
+                }
                 if(wavctrl.loop_sound_flag == true)
                 {
                     wavctrl.current_data = wavctrl.datastart;
                 }
                 else
-                {
-                    // 先填充0，并返回播放完成
-                    while(readlen++ < size)
-                    {
-                        *pbuf = 0;
-                        pbuf++;
-                    }
+                {                    
 				    //TODO: !!!!// 设置停止标志
                     if(wavwitchbuf == 0)
                     {
@@ -252,8 +257,9 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
                     {
                         wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
                     }
-                    return readlen;
                 }
+				
+                return readlen;
             }
         }
     }
@@ -267,7 +273,7 @@ void wav_sai_dma_tx_callback(void)
         wavwitchbuf = 0;
         if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END1)
         {
-            wav_buffill(wave_play_buf1, 4096);
+            wav_buffill((uint8_t*)&wave_play_buf1, 4096);
         }
         else
         {
@@ -281,7 +287,7 @@ void wav_sai_dma_tx_callback(void)
         wavwitchbuf = 1;
         if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END0)
         {
-            wav_buffill(wave_play_buf2, 4096);
+            wav_buffill((uint8_t*)&wave_play_buf2, 4096);
         }
         else
         {
@@ -318,7 +324,7 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
             //SAIA_Init(SAI_MODEMASTER_TX, SAI_CLOCKSTROBING_RISINGEDGE, SAI_DATASIZE_16);
             //SAIA_Init(SAI_MODEMASTER_TX, 0x200, SAI_DATASIZE_16);
             SAIA_SampleRate_Set(wavctrl.samplerate);//设置采样率
-            SAIA_TX_DMA_Init(wave_play_buf1, wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
+            SAIA_TX_DMA_Init((uint8_t*)&wave_play_buf1, (uint8_t*)&wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
         }
 #if 0
         else if(wavctrl.bps == 24)
@@ -344,9 +350,9 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
         wavctrl.stop_buf_flag = EM_WAV_NO_END;
         // <===
         wavwitchbuf = 0;
-        wav_buffill(wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
+        wav_buffill((uint8_t*)&wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
         wavwitchbuf = 1;
-        wav_buffill(wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
+        wav_buffill((uint8_t*)&wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
 		wavwitchbuf = 0;
         SAI_Play_Start();
     }
