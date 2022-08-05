@@ -41,6 +41,8 @@ typedef union
 void play_stop_wav(void);
 void play_start_wav(ENUM_WAVE_TYPES wav_type);
 void wav_play_manager(void);
+// Input: val …Ë÷√µƒ“Ù¡ø 0-10
+void set_volumn(uint8_t scale);
 #endif
 
 // End of File:audioplay.h

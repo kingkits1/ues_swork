@@ -89,6 +89,9 @@ typedef __packed struct
     bool loop_sound_flag;           // 判定是否为循环播放
     bool actived_flag;              // 是否为活动状态
     uint8_t stop_buf_flag;
+
+	bool is_ex_flash_data;
+	uint32_t flash_start_addr;	
 } __wavctrl;
 
 uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type);

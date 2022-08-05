@@ -2,6 +2,10 @@
 #ifndef __WAVE_DATA_DEFINES_H
 #define __WAVE_DATA_DEFINES_H
 #define __ENABLE_WAVE_DATA_DOWNLOAD 0
+// 外部FLASH WAV数据
+#define FLASH_EX_POWERUP_ADDR 0x30000
+#define FLASH_EX_POWERDOWN_ADDR 0x80000
+
 #if __ENABLE_WAVE_DATA_DOWNLOAD
 extern const unsigned char wave_data_us_max[];
 extern const unsigned char wave_data_us_min[];

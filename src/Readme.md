@@ -154,17 +154,18 @@ III. SDRAM 数据解析！！
 3. 声音出来了，但声音不对
 
 # 2022-8-3
------
-1. 尝试使用完全的示例代码环境
-  - [] TODO: 使用OLD代码中的声音数据
-  - [] TODO: 完整复制声音播放代码！！
+----- 
+
+1. <font color=green>尝试使用完全的示例代码环境
+  - [x] TODO: 使用OLD代码中的声音数据
+  - [x] TODO: 完整复制声音播放代码！！
   - [x] TODO: 开始处理单声道数据
-  - [] TODO: 似乎单声道数据还是没能处理，尝试把单声道数据变成双声道数据！
+  - [x] TODO: 似乎单声道数据还是没能处理，尝试把单声道数据变成双声道数据！
   - [x] 去掉系统生成的SAI模块，使用例程中的数据
-       - 需要修正文件 stm32f4xx_hal_conf.h
-         
+       - 需要修正文件 stm32f4xx_hal_conf.h         
          #define HAL_SAI_MODULE_ENABLED
-       - 并添加SAI相关驱动代码
+       - 并添加SAI相关驱动代码</font>
+
 
 2. HSE后面主时钟分频系数修正为示例状态
    （360 25 2 8）
@@ -195,8 +196,17 @@ III. SDRAM 数据解析！！
 
 # 2022-8-5
 ----
-
-- [x] TODO: 调节音量！！！
-- [ ] TODO: 声音调度测试！ 配合脚踏板！！！
-- [ ] TODO: UC 频率输出！！
-- [ ] TODO: UC 功率输出  
+<font color=green></font>
+<font color=red></font>
+- [x] <font color=red>TODO: 调节音量！！！</font>
+- [ ] <font color=red>TODO: 声音调度测试！ 配合脚踏板！！！</font>
+- [ ] <font color=red>TODO: 脚踏板测试</font>
+- [ ] <font color=red>TODO: 手控板测试</font>
+- [ ] <font color=red>TODO: 运行状态灯</font>
+- [ ] <font color=red>TODO: UC 频率输出！！</font>
+- [ ] <font color=red>TODO: UC 功率输出  </font>
+- [ ] <font color=red>TODO: UC 扫频输出，并测试不同负载时的状态</font>
+- [ ] <font color=red>TODO: UC 调整计划</font>
+- [ ] <font color=red>TODO: UC 控制编程及测试</font>
+- [ ] <font color=red>TODO: 通讯协议及网络口编程</font>
+- [ ] FIXME:

@@ -15,8 +15,6 @@ void init_hardware_module(void)
     W25QXX2_Init();
     // TIMER
     HAL_TIM_Base_Start_IT(&htim7);
-    // SDRAM
-    //SDRAM_Initialization_Sequence(&hsdram1);
     // SRAM
     
     // WM8978

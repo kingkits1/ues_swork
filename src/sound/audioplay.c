@@ -10,6 +10,16 @@
 
 #include "audioplay.h"
 static UNION_AUDIO_DATA play_data;
+//void WM8978_SPKvol_Set(uint8_t volx);
+
+// Input: val ÉèÖÃµÄÒôÁ¿ 0-10
+void set_volumn(uint8_t scale)
+{
+	uint8_t volumn;
+	if(scale>10)scale=10;
+	volumn =scale * 6 + 3;
+	WM8978_SPKvol_Set(volumn);
+}
 
 void clear_play_data(void)
 {

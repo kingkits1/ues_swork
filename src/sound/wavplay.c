@@ -6,6 +6,7 @@
 #include "../hardware/sai.h"
 #include "../hardware/wm8978.h"
 #include "../malloc/mem_defines.h"
+#include "../flash/w25qxx.h"
 //////////////////////////////////////////////////////////////////////////////////
 //1,支持16位/24位WAV文件播放
 //2,最高可以支持到192K/24bit的WAV格式.
@@ -29,6 +30,7 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     ChunkDATA *data;
 
     wavctrl.actived_flag = false;
+	wavctrl.is_ex_flash_data=false;
 	buf = wave_file_head;
     switch(wav_type)
     {
@@ -70,14 +72,22 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     // KEY pushed voice
     case EM_WAV_KEY_CLICK:
         buf = (uint8_t *)wave_data_key_click;
-        wavctrl.loop_sound_flag = false;
+        wavctrl.loop_sound_flag = true;
         wavctrl.actived_flag = true;
         break;
     // POWER ON
     case EM_WAV_POWER_ON:
+		wavctrl.is_ex_flash_data=true;
+		buf=(uint8_t*)&wave_file_head;
+		W25QXX1_Read((uint8_t *)&buf, FLASH_EX_POWERUP_ADDR, 512);
+		wavctrl.flash_start_addr=FLASH_EX_POWERUP_ADDR;
         break;
     // SHUT DOWN
     case EM_WAV_SHUT_DOWN:
+		wavctrl.is_ex_flash_data=true;		
+		buf=(uint8_t*)&wave_file_head;
+		W25QXX1_Read((uint8_t *)&buf, FLASH_EX_POWERDOWN_ADDR, 512);
+		wavctrl.flash_start_addr=FLASH_EX_POWERDOWN_ADDR;
         break;
     // OTHER
     case EM_WAV_DEFAULT:
@@ -118,10 +128,164 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     //}
     //}
     // zzx 初始化起始数据
-    wavctrl.datastart = buf + wavctrl.datalocate;
-    wavctrl.current_data = wavctrl.datastart;
-    wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
-    return 0;
+    if(wavctrl.is_ex_flash_data==false)
+    {
+		wavctrl.datastart = buf + wavctrl.datalocate;
+		wavctrl.current_data = wavctrl.datastart;
+		wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
+		return 0;
+    }
+	else
+	{
+		wavctrl.datastart = (uint8_t*)wavctrl.flash_start_addr + wavctrl.datalocate;
+		wavctrl.current_data = wavctrl.datastart;
+		wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
+		return 0;
+	}
+}
+
+
+//填充buf
+//buf:数据区
+//size:填充数据量.zzx ！必须为4的倍数
+//bits:位数(16/24)
+//返回值:读到的数据个数
+uint16_t wav_buffill_from_flash(uint8_t *buf, uint16_t size)
+{
+    uint16_t readlen = 0;
+    uint8_t *pbuf;
+    uint8_t count;
+
+    // 如果音频数据未准备好，则直接返回！！！
+    if(wavctrl.actived_flag == false)
+    {
+    	// Stop DMA
+        SAI_Play_Stop();
+		return 0;
+    }
+
+    pbuf = buf;
+    if(wavctrl.bps == 24) //24bit音频,需要处理一下
+    {
+        // zzx:24bit时，实际存储上每3个字节为一个数据，
+        // 到缓冲区时，需要写入4字节（最高字节的数据
+        // 是无效的），这里是3字节转4字节！
+        // 而且需要处理数据不够一个缓冲区时的问题！！！
+        // 这时要考虑是否为循环数据！！！！
+
+        count = 0;
+        while(readlen < size)
+        {
+        	#if 0
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+            if(count >= 3)
+            {
+                // 填充的数据
+                count = 0;
+                *pbuf = 0;
+                readlen ++;
+            }
+			#else
+			// byte 0
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 1
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 2
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            count++;
+			// byte 3 empty with 0
+			*pbuf = 0;
+			pbuf++;
+			readlen ++;
+			#endif
+            if(wavctrl.current_data >= wavctrl.data_end)
+            {
+                if(wavctrl.loop_sound_flag == true)
+                {
+                    wavctrl.current_data = wavctrl.datastart;
+                }
+                else
+                {
+                    // 填充0，并返回播放完成
+                    while(readlen++ < size)
+                    {
+                        *pbuf = 0;
+                        pbuf++;
+                        // TODO: !!!!// 设置停止标志
+                        if(wavwitchbuf == 0)
+                        {
+                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
+                        }
+                        else
+                        {
+                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
+                        }
+                        return readlen;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        while(readlen < size)
+        {
+        	// byte 0  0-7bit
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+			// byte 1 8-15bit
+			*pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+			
+            if(wavctrl.current_data >= wavctrl.data_end)
+            {
+            	// 先填充0，并返回播放完成
+                while(readlen++ < size)
+                {
+                    *pbuf = 0;
+                    pbuf++;
+                }
+                if(wavctrl.loop_sound_flag == true)
+                {
+                    wavctrl.current_data = wavctrl.datastart;
+                }
+                else
+                {                    
+				    //TODO: !!!!// 设置停止标志
+                    if(wavwitchbuf == 0)
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
+                    }
+                    else
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
+                    }
+                }
+				
+                return readlen;
+            }
+        }
+    }
+    return readlen;
 }
 
 //填充buf

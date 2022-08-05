@@ -3,6 +3,7 @@
 #include "cmsis_os.h"
 #include "global.h"
 #include "stdio.h"
+#include "key/key.h"
 volatile uint32_t sys_ms_count;
 volatile uint32_t sys_us_count;
 
@@ -130,6 +131,8 @@ __weak void general_sys_reset(void)
 
 void init_global_data(void)
 {
+	// gpio
+	init_key_val();
     // USART
     // TIMER
     sys_ms_count = 0;
