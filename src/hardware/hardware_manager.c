@@ -16,11 +16,11 @@ void init_hardware_module(void)
     // TIMER
     HAL_TIM_Base_Start_IT(&htim7);
     // SRAM
-    
+
     // WM8978
     WM8978_Init();
     // FPGA
-    
+
     // US control
     Start_US_work();
 

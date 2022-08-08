@@ -198,6 +198,24 @@ III. SDRAM 数据解析！！
 ----
 <font color=green></font>
 <font color=red></font>
+
+1. 扬声器使用扬声器声道(L/R OUT2) 未用耳机，因此设置音量只需要设置扬声器通道就可以了
+2. PH15 为电源触摸开关，使用EXTI 15
+3. 开关按键的灯显示为蓝色(PI5)+黄色(PI2)
+   
+# 2022-8-8
+
+ - [ ] 声音文件未完成 尚缺（低能量输出/钳口闭合）提示音
+ - [x] 声音文件转换程序完成
+ - [x] 转换开机、关机、报警文件
+ - [x] 声音文件装载到FLASH的工作环境调试完成
+ - [x] 下载开机、关机、报警文件
+ - [x] 增加播放FLASH的声音文件的代码
+ - [x] 测试音量调节
+ - [x] <font color=green>key_click_wav 播放时有时候会发不出声音？已解决（FIXME:），初始化SAIDMA时，偶尔会调用callback函数</font>
+
+
+
 - [x] <font color=red>TODO: 调节音量！！！</font>
 - [ ] <font color=red>TODO: 声音调度测试！ 配合脚踏板！！！</font>
 - [ ] <font color=red>TODO: 脚踏板测试</font>

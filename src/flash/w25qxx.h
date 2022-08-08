@@ -16,7 +16,7 @@
 #define W25Q128	0XEF17
 #define W25Q256 0XEF18
 
-extern uint16_t W25QXX_TYPE;					//定义W25QXX芯片型号
+//extern uint16_t W25QXX_TYPE;					//定义W25QXX芯片型号
 
 #define	W25QXX_CS1 		PFout(6) 	//W25QXX1的片选信号
 #define	W25QXX_CS2 		PFout(10) 	//W25QXX2的片选信号

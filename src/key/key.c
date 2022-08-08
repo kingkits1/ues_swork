@@ -113,8 +113,8 @@ bool is_es_min_actived(void)
 
 void set_hand_close_status(bool status)
 {
-	if(status) key_val.key.bits.hand_close = 1;
-	else key_val.key.bits.hand_close = 0;
+    if(status) key_val.key.bits.hand_close = 1;
+    else key_val.key.bits.hand_close = 0;
 }
 void set_handmaxmin_val(uint16_t hmax, uint16_t hmin)
 {

@@ -1,7 +1,7 @@
 #ifndef __GLOBAL_H
 #define __GLOBAL_H
 #include "sys/system.h"
-
+#define null (void *)0
 // Function defines
 #define ES_FUNCTION 0
 #define USE_HAL_I2C_FUNCTION 0 // 定义是否使用硬件的I2C

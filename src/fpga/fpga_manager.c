@@ -26,7 +26,7 @@ uint16_t FPGA_Read(uint8_t addr)
 
 void fpga_read_buf(uint16_t *pBuffer, uint32_t ReadAddr, uint32_t len)
 {
-    uint32_t r_ptr=ReadAddr<<1;
+    uint32_t r_ptr = ReadAddr << 1;
     set_fpga_read_port(true);
     while(len--)
     {
@@ -37,7 +37,7 @@ void fpga_read_buf(uint16_t *pBuffer, uint32_t ReadAddr, uint32_t len)
 }
 void fpga_write_buf(uint16_t *pBuffer, uint32_t WriteAddr, uint32_t len)
 {
-    uint32_t w_ptr=WriteAddr<<1;
+    uint32_t w_ptr = WriteAddr << 1;
     while(len--)
     {
         *((volatile uint16_t *)(FPGA_BASE + w_ptr)) = *pBuffer;
@@ -85,41 +85,41 @@ uint16_t fpga_data_check_sum2(void)
 
 void refresh_handler_status(void)
 {
-	switch(fpga_data.data.hand_msg)
-	{
-		case EM_HANDLER_STATUS_MIN: //        = 1, // MIN按下
-			set_handmaxmin_val(0,1);
-			set_hand_close_status(false);
-			break;
-		case EM_HANDLER_STATUS_MAX: //        = 2, // MAX按下
-			set_handmaxmin_val(1,0);
-			set_hand_close_status(false);
-			break;
-		case EM_HANDLER_STATUS_MIN_CLOSE://   = 3, // MIN按下且钳口闭合
-			set_handmaxmin_val(0,1);
-			set_hand_close_status(true);
-			break;
-		case EM_HANDLER_STATUS_MAX_CLOSE://   = 4, // MAX按下且钳口闭合
-			set_handmaxmin_val(1,0);
-			set_hand_close_status(true);
-			break;
-		case EM_HANDLER_STATUS_ONLY_Close://  = 5, // 仅钳口闭合，MAX/MIN未按下，可能脚踏使用
-			set_handmaxmin_val(0,0);
-			set_hand_close_status(true);
-			break;
-		case EM_HANDLER_STATUS_CONNECT://     = 6, //手柄接通	6
-			set_handmaxmin_val(0,0);
-			set_hand_close_status(false);
-		break;
-		case EM_HANDLER_STATUS_DISCONNECT://  = 9  //手柄断开	9
-			set_handmaxmin_val(0,0);
-			set_hand_close_status(false);
-			break;
-		default:
-			set_handmaxmin_val(0,0);
-			set_hand_close_status(false);
-			break;
-	}
+    switch(fpga_data.data.hand_msg)
+    {
+    case EM_HANDLER_STATUS_MIN: //        = 1, // MIN按下
+        set_handmaxmin_val(0, 1);
+        set_hand_close_status(false);
+        break;
+    case EM_HANDLER_STATUS_MAX: //        = 2, // MAX按下
+        set_handmaxmin_val(1, 0);
+        set_hand_close_status(false);
+        break;
+    case EM_HANDLER_STATUS_MIN_CLOSE://   = 3, // MIN按下且钳口闭合
+        set_handmaxmin_val(0, 1);
+        set_hand_close_status(true);
+        break;
+    case EM_HANDLER_STATUS_MAX_CLOSE://   = 4, // MAX按下且钳口闭合
+        set_handmaxmin_val(1, 0);
+        set_hand_close_status(true);
+        break;
+    case EM_HANDLER_STATUS_ONLY_Close://  = 5, // 仅钳口闭合，MAX/MIN未按下，可能脚踏使用
+        set_handmaxmin_val(0, 0);
+        set_hand_close_status(true);
+        break;
+    case EM_HANDLER_STATUS_CONNECT://     = 6, //手柄接通	6
+        set_handmaxmin_val(0, 0);
+        set_hand_close_status(false);
+        break;
+    case EM_HANDLER_STATUS_DISCONNECT://  = 9  //手柄断开	9
+        set_handmaxmin_val(0, 0);
+        set_hand_close_status(false);
+        break;
+    default:
+        set_handmaxmin_val(0, 0);
+        set_hand_close_status(false);
+        break;
+    }
 }
 uint8_t fpga_read_data(void)
 {
@@ -128,7 +128,7 @@ uint8_t fpga_read_data(void)
     if(fpga_data_check_sum1() == 0)
     {
         memcpy(fpga_data.buf, fpga_data_tmp.buf, 16);
-		refresh_handler_status();        
+        refresh_handler_status();
         return 0;
     }
     return 1;

@@ -3,8 +3,8 @@
 #define __US_CONTROL_H
 typedef struct
 {
-	uint8_t active_status;
-}ST_US_CONTROL_DATA;
+    uint8_t active_status;
+} ST_US_CONTROL_DATA;
 void US_Set_Pwr(uint16_t vol);
 void US_Set_Freq(uint32_t freq);
 void US_Set_Phase(uint8_t phase);

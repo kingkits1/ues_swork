@@ -6,8 +6,8 @@
  */
 extern SPI_HandleTypeDef hspi5;
 static uint8_t SPI_RX_TMP_BYTE;
-uint16_t W25QXX_TYPE = W25Q256;	//默认是W25Q256
-
+uint16_t W25QXX1_TYPE = W25Q256;	//默认是W25Q256
+uint16_t W25QXX2_TYPE = W25Q256;
 static void send_byte_to_flash(uint8_t ch)
 {
     HAL_SPI_Transmit(&hspi5, &ch, 1, 1000);
@@ -126,8 +126,8 @@ uint8_t W25QXX2_ReadSR(uint8_t regno)
 void W25QXX1_Init(void)
 {
     uint8_t temp;
-    W25QXX_TYPE = W25QXX1_ReadID();	        	//读取FLASH ID.
-    if(W25QXX_TYPE == W25Q256)              //SPI FLASH为W25Q256
+    W25QXX1_TYPE = W25QXX1_ReadID();	        	//读取FLASH ID.
+    if(W25QXX1_TYPE == W25Q256)              //SPI FLASH为W25Q256
     {
         temp = W25QXX1_ReadSR(3);            //读取状态寄存器3，判断地址模式
         if((temp & 0X01) == 0)			        		//如果不是4字节地址模式,则进入4字节地址模式
@@ -142,8 +142,8 @@ void W25QXX1_Init(void)
 void W25QXX2_Init(void)
 {
     uint8_t temp;
-    W25QXX_TYPE = W25QXX2_ReadID();	        	//读取FLASH ID.
-    if(W25QXX_TYPE == W25Q256)              //SPI FLASH为W25Q256
+    W25QXX2_TYPE = W25QXX2_ReadID();	        	//读取FLASH ID.
+    if(W25QXX2_TYPE == W25Q256)              //SPI FLASH为W25Q256
     {
         temp = W25QXX2_ReadSR(3);            //读取状态寄存器3，判断地址模式
         if((temp & 0X01) == 0)			        		//如果不是4字节地址模式,则进入4字节地址模式
@@ -153,7 +153,7 @@ void W25QXX2_Init(void)
             W25QXX_CS2 = 1;       		       						 //取消片选
         }
     }
-    W25QXX_CS2 = 1; 
+    W25QXX_CS2 = 1;
 }
 
 
@@ -243,7 +243,7 @@ void W25QXX1_Read(uint8_t *pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
     W25QXX_CS1 = 0;                          //使能器件
     send_byte_to_flash(W25X_ReadData);      //发送读取命令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX1_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((ReadAddr) >> 24));
     }
@@ -258,7 +258,7 @@ void W25QXX2_Read(uint8_t *pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
     W25QXX_CS2 = 0;                          //使能器件
     send_byte_to_flash(W25X_ReadData);      //发送读取命令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX2_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((ReadAddr) >> 24));
     }
@@ -280,7 +280,7 @@ void W25QXX1_Write_Page(uint8_t *pBuffer, uint32_t WriteAddr, uint16_t NumByteTo
     W25QXX1_Write_Enable();                  //SET WEL
     W25QXX_CS1 = 0;                          //使能器件
     send_byte_to_flash(W25X_PageProgram);   //发送写页命令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX1_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((WriteAddr) >> 24));
     }
@@ -297,7 +297,7 @@ void W25QXX2_Write_Page(uint8_t *pBuffer, uint32_t WriteAddr, uint16_t NumByteTo
     W25QXX2_Write_Enable();                  //SET WEL
     W25QXX_CS2 = 0;                          //使能器件
     send_byte_to_flash(W25X_PageProgram);   //发送写页命令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX2_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((WriteAddr) >> 24));
     }
@@ -485,7 +485,7 @@ void W25QXX1_Erase_Sector(uint32_t Dst_Addr)
     W25QXX1_Wait_Busy();
     W25QXX_CS1 = 0;                          //使能器件
     send_byte_to_flash(W25X_SectorErase);   //发送扇区擦除指令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX1_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((Dst_Addr) >> 24));
     }
@@ -505,7 +505,7 @@ void W25QXX2_Erase_Sector(uint32_t Dst_Addr)
     W25QXX2_Wait_Busy();
     W25QXX_CS2 = 0;                          //使能器件
     send_byte_to_flash(W25X_SectorErase);   //发送扇区擦除指令
-    if(W25QXX_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
+    if(W25QXX2_TYPE == W25Q256)              //如果是W25Q256的话地址为4字节的，要发送最高8位
     {
         send_byte_to_flash((uint8_t)((Dst_Addr) >> 24));
     }

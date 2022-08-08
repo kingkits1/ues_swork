@@ -30,8 +30,8 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     ChunkDATA *data;
 
     wavctrl.actived_flag = false;
-	wavctrl.is_ex_flash_data=false;
-	buf = wave_file_head;
+    wavctrl.is_ex_flash_data = false;
+    buf = (uint8_t *) null;
     switch(wav_type)
     {
     // US
@@ -72,22 +72,28 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     // KEY pushed voice
     case EM_WAV_KEY_CLICK:
         buf = (uint8_t *)wave_data_key_click;
-        wavctrl.loop_sound_flag = true;
+        wavctrl.loop_sound_flag = false;
         wavctrl.actived_flag = true;
         break;
     // POWER ON
     case EM_WAV_POWER_ON:
-		wavctrl.is_ex_flash_data=true;
-		buf=(uint8_t*)&wave_file_head;
-		W25QXX1_Read((uint8_t *)&buf, FLASH_EX_POWERUP_ADDR, 512);
-		wavctrl.flash_start_addr=FLASH_EX_POWERUP_ADDR;
+        wavctrl.is_ex_flash_data = true;
+        buf = (uint8_t *)wave_file_head;
+        W25QXX1_Read(wave_file_head, FLASH_EX_POWERUP_ADDR, 512);
+        wavctrl.flash_start_addr = FLASH_EX_POWERUP_ADDR;
+
+        wavctrl.loop_sound_flag = false;
+        wavctrl.actived_flag = true;
         break;
     // SHUT DOWN
     case EM_WAV_SHUT_DOWN:
-		wavctrl.is_ex_flash_data=true;		
-		buf=(uint8_t*)&wave_file_head;
-		W25QXX1_Read((uint8_t *)&buf, FLASH_EX_POWERDOWN_ADDR, 512);
-		wavctrl.flash_start_addr=FLASH_EX_POWERDOWN_ADDR;
+        wavctrl.is_ex_flash_data = true;
+        buf = (uint8_t *)wave_file_head;
+        W25QXX1_Read(wave_file_head, FLASH_EX_POWERDOWN_ADDR, 512);
+        wavctrl.flash_start_addr = FLASH_EX_POWERDOWN_ADDR;
+
+        wavctrl.loop_sound_flag = false;
+        wavctrl.actived_flag = true;
         break;
     // OTHER
     case EM_WAV_DEFAULT:
@@ -96,7 +102,7 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
         break;  // TODO:
     }
     // 防止错误输出
-    if(buf == wave_file_head) return 1;
+    if(buf == (uint8_t *) null) return 1;
 
     //riff=(ChunkRIFF *)buf;		//获取RIFF块
     //if(riff->Format==0X45564157)//是WAV文件
@@ -128,20 +134,20 @@ uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type)
     //}
     //}
     // zzx 初始化起始数据
-    if(wavctrl.is_ex_flash_data==false)
+    if(wavctrl.is_ex_flash_data == false)
     {
-		wavctrl.datastart = buf + wavctrl.datalocate;
-		wavctrl.current_data = wavctrl.datastart;
-		wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
-		return 0;
+        wavctrl.datastart = buf + wavctrl.datalocate;
+        wavctrl.current_data = wavctrl.datastart;
+        wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
+        return 0;
     }
-	else
-	{
-		wavctrl.datastart = (uint8_t*)wavctrl.flash_start_addr + wavctrl.datalocate;
-		wavctrl.current_data = wavctrl.datastart;
-		wavctrl.data_end = wavctrl.datastart + wavctrl.datasize;
-		return 0;
-	}
+    else
+    {
+        wavctrl.flash_start_addr = wavctrl.flash_start_addr + wavctrl.datalocate;
+        wavctrl.flash_cur_addr = wavctrl.flash_start_addr;
+        wavctrl.flash_end_addr = wavctrl.flash_start_addr + wavctrl.datasize;
+        return 0;
+    }
 }
 
 
@@ -155,110 +161,53 @@ uint16_t wav_buffill_from_flash(uint8_t *buf, uint16_t size)
     uint16_t readlen = 0;
     uint8_t *pbuf;
     uint8_t count;
+    uint32_t len;
+
 
     // 如果音频数据未准备好，则直接返回！！！
     if(wavctrl.actived_flag == false)
     {
-    	// Stop DMA
+        // Stop DMA
         SAI_Play_Stop();
-		return 0;
+        return 0;
     }
-
+    // TODO: 这行代码需要验证是否有用！！！
+    if(wavctrl.flash_cur_addr >= wavctrl.flash_end_addr) return 0;
+    W25QXX1_Read(wav_flash_temp_buf, wavctrl.flash_cur_addr, size);
+    wavctrl.current_data = wav_flash_temp_buf;
     pbuf = buf;
     if(wavctrl.bps == 24) //24bit音频,需要处理一下
     {
-        // zzx:24bit时，实际存储上每3个字节为一个数据，
-        // 到缓冲区时，需要写入4字节（最高字节的数据
-        // 是无效的），这里是3字节转4字节！
-        // 而且需要处理数据不够一个缓冲区时的问题！！！
-        // 这时要考虑是否为循环数据！！！！
-
+        len = (uint32_t)size / 4;
+        wavctrl.flash_cur_addr += len * 3;
         count = 0;
         while(readlen < size)
         {
-        	#if 0
+            // byte 0
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
             count++;
-            if(count >= 3)
-            {
-                // 填充的数据
-                count = 0;
-                *pbuf = 0;
-                readlen ++;
-            }
-			#else
-			// byte 0
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 1
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 2
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 3 empty with 0
-			*pbuf = 0;
-			pbuf++;
-			readlen ++;
-			#endif
-            if(wavctrl.current_data >= wavctrl.data_end)
-            {
-                if(wavctrl.loop_sound_flag == true)
-                {
-                    wavctrl.current_data = wavctrl.datastart;
-                }
-                else
-                {
-                    // 填充0，并返回播放完成
-                    while(readlen++ < size)
-                    {
-                        *pbuf = 0;
-                        pbuf++;
-                        // TODO: !!!!// 设置停止标志
-                        if(wavwitchbuf == 0)
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
-                        }
-                        else
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
-                        }
-                        return readlen;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        while(readlen < size)
-        {
-        	// byte 0  0-7bit
+            // byte 1
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
-			// byte 1 8-15bit
-			*pbuf = *wavctrl.current_data;
+            count++;
+            // byte 2
+            *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
-			
-            if(wavctrl.current_data >= wavctrl.data_end)
+            count++;
+            // byte 3 empty with 0
+            *pbuf = 0;
+            pbuf++;
+            readlen ++;
+            if(wavctrl.flash_cur_addr >= wavctrl.flash_end_addr)
             {
-            	// 先填充0，并返回播放完成
+                // 填充0，并返回播放完成
                 while(readlen++ < size)
                 {
                     *pbuf = 0;
@@ -266,11 +215,55 @@ uint16_t wav_buffill_from_flash(uint8_t *buf, uint16_t size)
                 }
                 if(wavctrl.loop_sound_flag == true)
                 {
-                    wavctrl.current_data = wavctrl.datastart;
+                    wavctrl.flash_cur_addr = wavctrl.flash_start_addr;
                 }
                 else
-                {                    
-				    //TODO: !!!!// 设置停止标志
+                {
+                    //  设置停止标志
+                    if(wavwitchbuf == 0)
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
+                    }
+                    else
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
+                    }
+                    return readlen;
+                }
+            }
+        }
+    }
+    else
+    {
+        wavctrl.flash_cur_addr += size;
+        while(readlen < size)
+        {
+            // byte 0  0-7bit
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            // byte 1 8-15bit
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+
+            if(wavctrl.flash_cur_addr >= wavctrl.flash_end_addr)
+            {
+                // 先填充0，并返回播放完成
+                while(readlen++ < size)
+                {
+                    *pbuf = 0;
+                    pbuf++;
+                }
+                if(wavctrl.loop_sound_flag == true)
+                {
+                    wavctrl.flash_cur_addr = wavctrl.flash_start_addr;
+                }
+                else
+                {
+                    // 设置停止标志
                     if(wavwitchbuf == 0)
                     {
                         wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
@@ -280,7 +273,7 @@ uint16_t wav_buffill_from_flash(uint8_t *buf, uint16_t size)
                         wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
                     }
                 }
-				
+
                 return readlen;
             }
         }
@@ -301,106 +294,42 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
     // 如果音频数据未准备好，则直接返回！！！
     if(wavctrl.actived_flag == false)
     {
-    	// Stop DMA
+        // Stop DMA
         SAI_Play_Stop();
-		return 0;
+        return 0;
     }
 
     pbuf = buf;
     if(wavctrl.bps == 24) //24bit音频,需要处理一下
     {
-        // zzx:24bit时，实际存储上每3个字节为一个数据，
-        // 到缓冲区时，需要写入4字节（最高字节的数据
-        // 是无效的），这里是3字节转4字节！
-        // 而且需要处理数据不够一个缓冲区时的问题！！！
-        // 这时要考虑是否为循环数据！！！！
-
         count = 0;
         while(readlen < size)
         {
-        	#if 0
+            // byte 0
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
             count++;
-            if(count >= 3)
-            {
-                // 填充的数据
-                count = 0;
-                *pbuf = 0;
-                readlen ++;
-            }
-			#else
-			// byte 0
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 1
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 2
-			*pbuf = *wavctrl.current_data;
-            wavctrl.current_data++;
-            readlen++;
-            pbuf++;
-            count++;
-			// byte 3 empty with 0
-			*pbuf = 0;
-			pbuf++;
-			readlen ++;
-			#endif
-            if(wavctrl.current_data >= wavctrl.data_end)
-            {
-                if(wavctrl.loop_sound_flag == true)
-                {
-                    wavctrl.current_data = wavctrl.datastart;
-                }
-                else
-                {
-                    // 填充0，并返回播放完成
-                    while(readlen++ < size)
-                    {
-                        *pbuf = 0;
-                        pbuf++;
-                        // TODO: !!!!// 设置停止标志
-                        if(wavwitchbuf == 0)
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
-                        }
-                        else
-                        {
-                            wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
-                        }
-                        return readlen;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        while(readlen < size)
-        {
-        	// byte 0  0-7bit
+            // byte 1
             *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
-			// byte 1 8-15bit
-			*pbuf = *wavctrl.current_data;
+            count++;
+            // byte 2
+            *pbuf = *wavctrl.current_data;
             wavctrl.current_data++;
             readlen++;
             pbuf++;
-			
+            count++;
+            // byte 3 empty with 0
+            *pbuf = 0;
+            pbuf++;
+            readlen ++;
             if(wavctrl.current_data >= wavctrl.data_end)
             {
-            	// 先填充0，并返回播放完成
+                // 填充0，并返回播放完成
                 while(readlen++ < size)
                 {
                     *pbuf = 0;
@@ -411,8 +340,8 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
                     wavctrl.current_data = wavctrl.datastart;
                 }
                 else
-                {                    
-				    //TODO: !!!!// 设置停止标志
+                {
+                    // !!!!// 设置停止标志
                     if(wavwitchbuf == 0)
                     {
                         wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
@@ -422,7 +351,50 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
                         wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
                     }
                 }
-				
+                return readlen;
+            }
+        }
+    }
+    else
+    {
+        while(readlen < size)
+        {
+            // byte 0  0-7bit
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+            // byte 1 8-15bit
+            *pbuf = *wavctrl.current_data;
+            wavctrl.current_data++;
+            readlen++;
+            pbuf++;
+
+            if(wavctrl.current_data >= wavctrl.data_end)
+            {
+                // 先填充0，并返回播放完成
+                while(readlen++ < size)
+                {
+                    *pbuf = 0;
+                    pbuf++;
+                }
+                if(wavctrl.loop_sound_flag == true)
+                {
+                    wavctrl.current_data = wavctrl.datastart;
+                }
+                else
+                {
+                    // 设置停止标志
+                    if(wavwitchbuf == 0)
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END0;
+                    }
+                    else
+                    {
+                        wavctrl.stop_buf_flag = EM_WAV_TWO_BUFFER_END1;
+                    }
+                }
+
                 return readlen;
             }
         }
@@ -430,14 +402,14 @@ uint16_t wav_buffill(uint8_t *buf, uint16_t size)
     return readlen;
 }
 //WAV播放时,SAI DMA传输回调函数
-void wav_sai_dma_tx_callback(void)
+void wav_sai_dma_tx_flash_callback(void)
 {
     if(DMA2_Stream3->CR & (1 << 19))
     {
         wavwitchbuf = 0;
         if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END1)
         {
-            wav_buffill((uint8_t*)&wave_play_buf1, 4096);
+            wav_buffill_from_flash(wave_play_buf1, 4096);
         }
         else
         {
@@ -451,7 +423,40 @@ void wav_sai_dma_tx_callback(void)
         wavwitchbuf = 1;
         if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END0)
         {
-            wav_buffill((uint8_t*)&wave_play_buf2, 4096);
+            wav_buffill_from_flash(wave_play_buf2, 4096);
+        }
+        else
+        {
+            // Stop DMA
+            SAI_Play_Stop();
+            wavctrl.actived_flag = false;
+        }
+    }
+    wavtransferend = 1;
+}
+//WAV播放时,SAI DMA传输回调函数
+void wav_sai_dma_tx_callback(void)
+{
+    if(DMA2_Stream3->CR & (1 << 19))
+    {
+        wavwitchbuf = 0;
+        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END1)
+        {
+            wav_buffill(wave_play_buf1, 4096);
+        }
+        else
+        {
+            // Stop DMA
+            SAI_Play_Stop();
+            wavctrl.actived_flag = false;
+        }
+    }
+    else
+    {
+        wavwitchbuf = 1;
+        if(wavctrl.stop_buf_flag != EM_WAV_TWO_BUFFER_END0)
+        {
+            wav_buffill(wave_play_buf2, 4096);
         }
         else
         {
@@ -488,7 +493,7 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
             //SAIA_Init(SAI_MODEMASTER_TX, SAI_CLOCKSTROBING_RISINGEDGE, SAI_DATASIZE_16);
             //SAIA_Init(SAI_MODEMASTER_TX, 0x200, SAI_DATASIZE_16);
             SAIA_SampleRate_Set(wavctrl.samplerate);//设置采样率
-            SAIA_TX_DMA_Init((uint8_t*)&wave_play_buf1, (uint8_t*)&wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
+            SAIA_TX_DMA_Init(wave_play_buf1, wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE / 2, 1); //配置TX DMA,16位
         }
 #if 0
         else if(wavctrl.bps == 24)
@@ -504,8 +509,15 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
             // error format！！！
             return 1;
         }
-        sai_tx_callback = wav_sai_dma_tx_callback;			//回调函数指wav_sai_dma_callback
 
+        if(wavctrl.is_ex_flash_data == false)
+        {
+            sai_tx_callback = wav_sai_dma_tx_callback;			//回调函数指wav_sai_dma_callback
+        }
+        else
+        {
+            sai_tx_callback = wav_sai_dma_tx_flash_callback;
+        }
         // 需要先强制停止播放
         SAI_Play_Stop();
 
@@ -513,11 +525,22 @@ uint8_t wav_play_song(ENUM_WAVE_TYPES type)
         // zzx 初始化缓冲区时 需要同时初始化标记！
         wavctrl.stop_buf_flag = EM_WAV_NO_END;
         // <===
+        if(wavctrl.is_ex_flash_data == false)
+        {
+            wavwitchbuf = 0;
+            wav_buffill(wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
+            wavwitchbuf = 1;
+            wav_buffill(wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
+        }
+        else
+        {
+            wavwitchbuf = 0;
+            wav_buffill_from_flash(wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
+            wavwitchbuf = 1;
+            wav_buffill_from_flash(wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
+        }
         wavwitchbuf = 0;
-        wav_buffill((uint8_t*)&wave_play_buf1, WAV_SAI_TX_DMA_BUFSIZE);
-        wavwitchbuf = 1;
-        wav_buffill((uint8_t*)&wave_play_buf2, WAV_SAI_TX_DMA_BUFSIZE);
-		wavwitchbuf = 0;
+        wavctrl.actived_flag = true;
         SAI_Play_Start();
     }
     return res;

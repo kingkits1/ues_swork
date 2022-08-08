@@ -53,7 +53,7 @@ uint8_t WM8978_Init(void)
     WM8978_HPvol_Set(40, 40);	    //耳机音量设置
     WM8978_SPKvol_Set(30);		    //喇叭音量设置
 
-	WM8978_ADDA_Cfg(1, 0);	//开启DAC
+    WM8978_ADDA_Cfg(1, 0);	//开启DAC
     WM8978_Input_Cfg(0, 0, 0); //关闭输入通道
     WM8978_Output_Cfg(1, 0);	//开启DAC输出
     return 0;

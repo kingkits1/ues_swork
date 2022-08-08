@@ -1,16 +1,16 @@
 // File:fpga_manager.h
 #ifndef __FPGE_MANAGER_H
 #define __FPGE_MANAGER_H
-typedef enum 
+typedef enum
 {
-	EM_HANDLER_STATUS_MIN        = 1, // MIN按下
-	EM_HANDLER_STATUS_MAX        = 2, // MAX按下
-	EM_HANDLER_STATUS_MIN_CLOSE  = 3, // MIN按下且钳口闭合
-	EM_HANDLER_STATUS_MAX_CLOSE  = 4, // MAX按下且钳口闭合
-	EM_HANDLER_STATUS_ONLY_Close = 5, // 仅钳口闭合，MAX/MIN未按下，可能脚踏使用
-	EM_HANDLER_STATUS_CONNECT    = 6, //手柄接通	6
-	EM_HANDLER_STATUS_DISCONNECT = 9  //手柄断开	9
-}ENUM_HANDLER_STATUS_DEFINES;
+    EM_HANDLER_STATUS_MIN        = 1, // MIN按下
+    EM_HANDLER_STATUS_MAX        = 2, // MAX按下
+    EM_HANDLER_STATUS_MIN_CLOSE  = 3, // MIN按下且钳口闭合
+    EM_HANDLER_STATUS_MAX_CLOSE  = 4, // MAX按下且钳口闭合
+    EM_HANDLER_STATUS_ONLY_Close = 5, // 仅钳口闭合，MAX/MIN未按下，可能脚踏使用
+    EM_HANDLER_STATUS_CONNECT    = 6, //手柄接通	6
+    EM_HANDLER_STATUS_DISCONNECT = 9  //手柄断开	9
+} ENUM_HANDLER_STATUS_DEFINES;
 
 typedef struct
 {

@@ -131,8 +131,8 @@ __weak void general_sys_reset(void)
 
 void init_global_data(void)
 {
-	// gpio
-	init_key_val();
+    // gpio
+    init_key_val();
     // USART
     // TIMER
     sys_ms_count = 0;

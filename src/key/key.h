@@ -33,7 +33,7 @@ typedef struct
     uint16_t foot_min: 1;
     uint16_t hand_max: 1;
     uint16_t hand_min: 1;
-	uint16_t hand_close:1;
+    uint16_t hand_close: 1;
     // ¸ßÆµµçµ¶²Ù×÷ TODO:
     uint16_t elect_action: 1;
     uint16_t unused  : 10;

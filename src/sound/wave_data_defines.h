@@ -5,19 +5,22 @@
 // 外部FLASH WAV数据
 #define FLASH_EX_POWERUP_ADDR 0x30000
 #define FLASH_EX_POWERDOWN_ADDR 0x80000
-
+#define FLASH_EX_ALARM_ADDR 0x20000
+//#define LENTH_OF_ALARM 40960
+//#define LENTH_OF_START 282624
+//#define LENTH_OF_SHUTDOWN 282624
 #if __ENABLE_WAVE_DATA_DOWNLOAD
 extern const unsigned char wave_data_us_max[];
 extern const unsigned char wave_data_us_min[];
 extern const unsigned char wave_data_us_close[];
 extern const unsigned char wave_data_key_click[];
-#else 
+#else
 #define wave_data_us_max    ((const unsigned char *)0x8100000)
 #define wave_data_us_min    ((const unsigned char *)0x8110000)
 #define wave_data_us_close  ((const unsigned char *)0x8120000)
 #define wave_data_key_click ((const unsigned char *)0x81B0000)
 #endif
-typedef enum	
+typedef enum
 {
     // US
     EM_WAV_US_CUTTING,    // US MAX 切割

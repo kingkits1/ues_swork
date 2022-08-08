@@ -90,13 +90,17 @@ typedef __packed struct
     bool actived_flag;              // 是否为活动状态
     uint8_t stop_buf_flag;
 
-	bool is_ex_flash_data;
-	uint32_t flash_start_addr;	
+    bool is_ex_flash_data;
+    uint32_t flash_start_addr;
+    uint32_t flash_end_addr;
+    uint32_t flash_cur_addr;
 } __wavctrl;
 
 uint8_t wav_decode_init(ENUM_WAVE_TYPES wav_type);
 uint16_t wav_buffill(uint8_t *buf, uint16_t size);
+uint16_t wav_buffill_from_flash(uint8_t *buf, uint16_t size);
 void wav_sai_dma_tx_callback(void);
+void wav_sai_dma_tx_flash_callback(void);
 uint8_t wav_play_song(ENUM_WAVE_TYPES wav_type);
 void set_wav_control_active_flag(bool active);
 #endif
